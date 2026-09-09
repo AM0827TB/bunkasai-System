@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>文化祭シューティング</title>
+<title>SHOOTINGGALAXY</title>
 
 <style>
 body {
@@ -87,14 +87,22 @@ button {
 </head>
 
 <body>
+    body {
+    font-family: sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    background: #000000;
+    color: white;
+}
 
-<h1>🎯 SHOOTING GAME</h1>
+<h1>SHOOTING GALAXY</h1>
 
 <div id="round">第1回 / 全3回</div>
 
 <div id="timer">50秒</div>
 
-<div id="status">ゲーム開始を押してください</div>
+<div id="status">集計開始</div>
 
 <div id="score">0 点</div>
 
@@ -129,7 +137,7 @@ button {
     第2回：0点<br>
     第3回：0点<br>
     <br>
-    🏆 合計：0点
+     合計：0点
 </div>
 
 <script>
@@ -164,7 +172,7 @@ function updateDisplay() {
         "第1回：" + roundScores[0] + "点<br>" +
         "第2回：" + roundScores[1] + "点<br>" +
         "第3回：" + roundScores[2] + "点<br><br>" +
-        "🏆 合計：" +
+        " 合計：" +
         (roundScores[0] + roundScores[1] + roundScores[2]) +
         "点";
 }
@@ -182,7 +190,7 @@ function startGame() {
     shots = 0;
 
     document.getElementById("status").textContent =
-        "🔥 ゲーム中！";
+        "none";
 
     document.getElementById("start").style.display =
         "none";
@@ -216,7 +224,7 @@ function endGame() {
     roundScores[currentRound - 1] = score;
 
     document.getElementById("status").textContent =
-        "⏰ 第" + currentRound + "回終了！";
+        "第" + currentRound + "回終了！";
 
     updateDisplay();
 
@@ -228,7 +236,7 @@ function endGame() {
     } else {
 
         document.getElementById("status").textContent =
-            "🏆 3回終了！";
+            " 3回終了！";
 
     }
 }
@@ -281,7 +289,7 @@ function nextRound() {
 }
 
 
-// 次のお客さん
+// NEXT CHALLENGER
 function resetGame() {
 
     clearInterval(timer);
