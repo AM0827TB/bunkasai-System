@@ -1,325 +1,226 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHOOTING GALAXY</title>
 
-<title>SHOOTINGGALAXY</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000000;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-<style>
-body {
-    font-family: sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-    background: #eeeeee;
-}
+    h1 {
+      font-size: 40px;
+      margin-top: 30px;
+    }
 
-h1 {
-    font-size: 42px;
-}
+    #status {
+      font-size: 28px;
+      margin: 20px;
+    }
 
-#round {
-    font-size: 30px;
-    font-weight: bold;
-    margin: 15px;
-}
+    #timer {
+      font-size: 70px;
+      font-weight: bold;
+      margin: 20px;
+    }
 
-#timer {
-    font-size: 70px;
-    font-weight: bold;
-    margin: 15px;
-}
+    #score {
+      font-size: 50px;
+      margin: 20px;
+    }
 
-#score {
-    font-size: 80px;
-    font-weight: bold;
-    margin: 20px;
-}
+    #round {
+      font-size: 25px;
+      margin: 15px;
+    }
 
-#shots {
-    font-size: 30px;
-    margin-bottom: 25px;
-}
+    button {
+      font-size: 25px;
+      padding: 15px 25px;
+      margin: 8px;
+      border-radius: 10px;
+      border: 2px solid white;
+      background: black;
+      color: white;
+    }
 
-button {
-    font-size: 30px;
-    padding: 25px;
-    margin: 10px;
-    border-radius: 15px;
-    border: none;
-}
+    button:active {
+      background: white;
+      color: black;
+    }
 
-.scoreButton {
-    min-width: 150px;
-}
+    .score-buttons {
+      margin-top: 20px;
+    }
 
-#miss {
-    width: 330px;
-}
-
-#start {
-    font-size: 35px;
-    background: #dddddd;
-}
-
-#nextRound {
-    font-size: 30px;
-    display: none;
-}
-
-#reset {
-    font-size: 25px;
-    margin-top: 25px;
-}
-
-#results {
-    font-size: 25px;
-    margin-top: 25px;
-}
-
-#status {
-    font-size: 28px;
-    font-weight: bold;
-    margin: 20px;
-}
-</style>
+    #roundScores {
+      font-size: 22px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 
 <body>
-    body {
-    font-family: sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-    background: #000000;
-    color: white;
-}
 
-<h1>SHOOTING GALAXY</h1>
+  <h1>SHOOTING GALAXY</h1>
 
-<div id="round">第1回 / 全3回</div>
+  <div id="status">集計開始</div>
 
-<div id="timer">50秒</div>
+  <div id="round">1回目</div>
 
-<div id="status">集計開始</div>
+  <div id="timer">50</div>
 
-<div id="score">0 点</div>
+  <div id="score">0</div>
 
-<div id="shots">発射数：0</div>
-
-<div>
-    <button class="scoreButton" onclick="addScore(10)">10点</button>
-    <button class="scoreButton" onclick="addScore(20)">20点</button>
-</div>
-
-<div>
-    <button class="scoreButton" onclick="addScore(30)">30点</button>
-    <button class="scoreButton" onclick="addScore(50)">50点</button>
-</div>
-
-<div>
-    <button class="scoreButton" onclick="addScore(100)">100点</button>
-</div>
-
-<div>
-    <button id="miss" onclick="miss()">ミス</button>
-</div>
-
-<button id="start" onclick="startGame()">▶️ ゲーム開始</button>
-
-<button id="nextRound" onclick="nextRound()">➡️ 次の回へ</button>
-
-<button id="reset" onclick="resetGame()">🔄 次のお客さん</button>
-
-<div id="results">
-    第1回：0点<br>
-    第2回：0点<br>
-    第3回：0点<br>
+  <div class="score-buttons">
+    <button onclick="addScore(10)">10</button>
+    <button onclick="addScore(20)">20</button>
+    <button onclick="addScore(30)">30</button>
+    <button onclick="addScore(50)">50</button>
+    <button onclick="addScore(100)">100</button>
     <br>
-     合計：0点
-</div>
+    <button onclick="miss()">MISS</button>
+  </div>
 
-<script>
+  <div>
+    <button onclick="startGame()">集計開始</button>
+    <button onclick="nextRound()">次のラウンド</button>
+    <button onclick="nextCustomer()">次のお客様</button>
+  </div>
 
-let currentRound = 1;
-let timeLeft = 50;
-let score = 0;
-let shots = 0;
+  <div id="roundScores">
+    1回目：0点<br>
+    2回目：0点<br>
+    3回目：0点<br>
+    合計：0点
+  </div>
 
-let roundScores = [0, 0, 0];
+  <script>
+    let currentRound = 1;
+    let timeLeft = 50;
+    let score = 0;
+    let shots = 0;
+    let timer = null;
+    let gameRunning = false;
 
-let timer = null;
-let gameRunning = false;
+    let roundScores = [0, 0, 0];
 
+    const status = document.getElementById("status");
+    const timerDisplay = document.getElementById("timer");
+    const scoreDisplay = document.getElementById("score");
+    const roundDisplay = document.getElementById("round");
+    const roundScoresDisplay = document.getElementById("roundScores");
 
-// 画面を更新
-function updateDisplay() {
+    function startGame() {
+      if (gameRunning) return;
 
-    document.getElementById("round").textContent =
-        "第" + currentRound + "回 / 全3回";
+      gameRunning = true;
+      timeLeft = 50;
+      score = 0;
+      shots = 0;
 
-    document.getElementById("timer").textContent =
-        timeLeft + "秒";
+      scoreDisplay.textContent = score;
+      timerDisplay.textContent = timeLeft;
+      status.textContent = "集計中";
+      roundDisplay.textContent = currentRound + "回目";
 
-    document.getElementById("score").textContent =
-        score + " 点";
-
-    document.getElementById("shots").textContent =
-        "発射数：" + shots;
-
-    document.getElementById("results").innerHTML =
-        "第1回：" + roundScores[0] + "点<br>" +
-        "第2回：" + roundScores[1] + "点<br>" +
-        "第3回：" + roundScores[2] + "点<br><br>" +
-        " 合計：" +
-        (roundScores[0] + roundScores[1] + roundScores[2]) +
-        "点";
-}
-
-
-// ゲーム開始
-function startGame() {
-
-    if (gameRunning) return;
-
-    gameRunning = true;
-
-    timeLeft = 50;
-    score = 0;
-    shots = 0;
-
-    document.getElementById("status").textContent =
-        "none";
-
-    document.getElementById("start").style.display =
-        "none";
-
-    document.getElementById("nextRound").style.display =
-        "none";
-
-    updateDisplay();
-
-    timer = setInterval(function() {
-
+      timer = setInterval(() => {
         timeLeft--;
 
-        updateDisplay();
+        timerDisplay.textContent = timeLeft;
 
         if (timeLeft <= 0) {
-            endGame();
+          endGame();
         }
-
-    }, 1000);
-}
-
-
-// ゲーム終了
-function endGame() {
-
-    clearInterval(timer);
-
-    gameRunning = false;
-
-    roundScores[currentRound - 1] = score;
-
-    document.getElementById("status").textContent =
-        "第" + currentRound + "回終了！";
-
-    updateDisplay();
-
-    if (currentRound < 3) {
-
-        document.getElementById("nextRound").style.display =
-            "inline-block";
-
-    } else {
-
-        document.getElementById("status").textContent =
-            " 3回終了！";
-
+      }, 1000);
     }
-}
 
+    function addScore(points) {
+      if (!gameRunning) return;
 
-// 得点
-function addScore(points) {
+      score += points;
+      shots++;
 
-    if (!gameRunning) return;
+      scoreDisplay.textContent = score;
+    }
 
-    score += points;
-    shots++;
+    function miss() {
+      if (!gameRunning) return;
 
-    updateDisplay();
-}
+      shots++;
+    }
 
+    function endGame() {
+      clearInterval(timer);
+      timer = null;
+      gameRunning = false;
 
-// ミス
-function miss() {
+      roundScores[currentRound - 1] = score;
 
-    if (!gameRunning) return;
+      status.textContent = currentRound + "回 FINISH";
 
-    shots++;
+      updateRoundScores();
+    }
 
-    updateDisplay();
-}
+    function nextRound() {
+      if (gameRunning) return;
 
+      if (currentRound >= 3) {
+        status.textContent = "3回 FINISH";
+        return;
+      }
 
-// 次の回
-function nextRound() {
+      currentRound++;
 
-    if (gameRunning) return;
+      timeLeft = 50;
+      score = 0;
+      shots = 0;
 
-    currentRound++;
+      timerDisplay.textContent = timeLeft;
+      scoreDisplay.textContent = score;
+      roundDisplay.textContent = currentRound + "回目";
 
-    timeLeft = 50;
-    score = 0;
-    shots = 0;
+      status.textContent = "集計開始";
+    }
 
-    document.getElementById("status").textContent =
-        "ゲーム開始を押してください";
+    function nextCustomer() {
+      clearInterval(timer);
 
-    document.getElementById("nextRound").style.display =
-        "none";
+      currentRound = 1;
+      timeLeft = 50;
+      score = 0;
+      shots = 0;
+      gameRunning = false;
 
-    document.getElementById("start").style.display =
-        "inline-block";
+      roundScores = [0, 0, 0];
 
-    updateDisplay();
-}
+      timerDisplay.textContent = timeLeft;
+      scoreDisplay.textContent = score;
+      roundDisplay.textContent = "1回目";
+      status.textContent = "集計開始";
 
+      updateRoundScores();
+    }
 
-// NEXT CHALLENGER
-function resetGame() {
+    function updateRoundScores() {
+      const total =
+        roundScores[0] +
+        roundScores[1] +
+        roundScores[2];
 
-    clearInterval(timer);
-
-    currentRound = 1;
-    timeLeft = 50;
-    score = 0;
-    shots = 0;
-
-    roundScores = [0, 0, 0];
-
-    gameRunning = false;
-
-    document.getElementById("status").textContent =
-        "ゲーム開始を押してください";
-
-    document.getElementById("start").style.display =
-        "inline-block";
-
-    document.getElementById("nextRound").style.display =
-        "none";
-
-    updateDisplay();
-}
-
-
-// 最初の表示
-updateDisplay();
-
-</script>
+      roundScoresDisplay.innerHTML =
+        "1回目：" + roundScores[0] + "点<br>" +
+        "2回目：" + roundScores[1] + "点<br>" +
+        "3回目：" + roundScores[2] + "点<br>" +
+        "合計：" + total + "点";
+    }
+  </script>
 
 </body>
 </html>
