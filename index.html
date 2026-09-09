@@ -19,6 +19,18 @@ h1 {
     font-size: 42px;
 }
 
+#round {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 15px;
+}
+
+#timer {
+    font-size: 70px;
+    font-weight: bold;
+    margin: 15px;
+}
+
 #score {
     font-size: 80px;
     font-weight: bold;
@@ -46,14 +58,30 @@ button {
     width: 330px;
 }
 
+#start {
+    font-size: 35px;
+    background: #dddddd;
+}
+
+#nextRound {
+    font-size: 30px;
+    display: none;
+}
+
 #reset {
     font-size: 25px;
     margin-top: 25px;
 }
 
-#highscore {
+#results {
     font-size: 25px;
     margin-top: 25px;
+}
+
+#status {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 20px;
 }
 </style>
 </head>
@@ -62,9 +90,15 @@ button {
 
 <h1>🎯 SHOOTING GAME</h1>
 
+<div id="round">第1回 / 全3回</div>
+
+<div id="timer">50秒</div>
+
+<div id="status">ゲーム開始を押してください</div>
+
 <div id="score">0 点</div>
 
-<div id="shots">残り玉数：1000</div>
+<div id="shots">発射数：0</div>
 
 <div>
     <button class="scoreButton" onclick="addScore(10)">10点</button>
@@ -84,61 +118,197 @@ button {
     <button id="miss" onclick="miss()">ミス</button>
 </div>
 
-<button id="reset" onclick="resetGame()">次のお客さん</button>
+<button id="start" onclick="startGame()">▶️ ゲーム開始</button>
 
-<div id="highscore">
-    🏆 最高得点：0点
+<button id="nextRound" onclick="nextRound()">➡️ 次の回へ</button>
+
+<button id="reset" onclick="resetGame()">🔄 次のお客さん</button>
+
+<div id="results">
+    第1回：0点<br>
+    第2回：0点<br>
+    第3回：0点<br>
+    <br>
+    🏆 合計：0点
 </div>
 
 <script>
 
+let currentRound = 1;
+let timeLeft = 50;
 let score = 0;
-let shots = 1000;
-let highScore = 0;
+let shots = 0;
 
+let roundScores = [0, 0, 0];
+
+let timer = null;
+let gameRunning = false;
+
+
+// 画面を更新
 function updateDisplay() {
+
+    document.getElementById("round").textContent =
+        "第" + currentRound + "回 / 全3回";
+
+    document.getElementById("timer").textContent =
+        timeLeft + "秒";
 
     document.getElementById("score").textContent =
         score + " 点";
 
     document.getElementById("shots").textContent =
-        "残り玉数：" + shots;
+        "発射数：" + shots;
 
-    document.getElementById("highscore").textContent =
-        "🏆 最高得点：" + highScore + "点";
+    document.getElementById("results").innerHTML =
+        "第1回：" + roundScores[0] + "点<br>" +
+        "第2回：" + roundScores[1] + "点<br>" +
+        "第3回：" + roundScores[2] + "点<br><br>" +
+        "🏆 合計：" +
+        (roundScores[0] + roundScores[1] + roundScores[2]) +
+        "点";
 }
 
+
+// ゲーム開始
+function startGame() {
+
+    if (gameRunning) return;
+
+    gameRunning = true;
+
+    timeLeft = 50;
+    score = 0;
+    shots = 0;
+
+    document.getElementById("status").textContent =
+        "🔥 ゲーム中！";
+
+    document.getElementById("start").style.display =
+        "none";
+
+    document.getElementById("nextRound").style.display =
+        "none";
+
+    updateDisplay();
+
+    timer = setInterval(function() {
+
+        timeLeft--;
+
+        updateDisplay();
+
+        if (timeLeft <= 0) {
+            endGame();
+        }
+
+    }, 1000);
+}
+
+
+// ゲーム終了
+function endGame() {
+
+    clearInterval(timer);
+
+    gameRunning = false;
+
+    roundScores[currentRound - 1] = score;
+
+    document.getElementById("status").textContent =
+        "⏰ 第" + currentRound + "回終了！";
+
+    updateDisplay();
+
+    if (currentRound < 3) {
+
+        document.getElementById("nextRound").style.display =
+            "inline-block";
+
+    } else {
+
+        document.getElementById("status").textContent =
+            "🏆 3回終了！";
+
+    }
+}
+
+
+// 得点
 function addScore(points) {
 
-    if (shots <= 0) return;
+    if (!gameRunning) return;
 
     score += points;
-    shots--;
-
-    if (score > highScore) {
-        highScore = score;
-    }
+    shots++;
 
     updateDisplay();
 }
 
+
+// ミス
 function miss() {
 
-    if (shots <= 0) return;
+    if (!gameRunning) return;
 
-    shots--;
+    shots++;
 
     updateDisplay();
 }
 
+
+// 次の回
+function nextRound() {
+
+    if (gameRunning) return;
+
+    currentRound++;
+
+    timeLeft = 50;
+    score = 0;
+    shots = 0;
+
+    document.getElementById("status").textContent =
+        "ゲーム開始を押してください";
+
+    document.getElementById("nextRound").style.display =
+        "none";
+
+    document.getElementById("start").style.display =
+        "inline-block";
+
+    updateDisplay();
+}
+
+
+// 次のお客さん
 function resetGame() {
 
+    clearInterval(timer);
+
+    currentRound = 1;
+    timeLeft = 50;
     score = 0;
-    shots = 1000;
+    shots = 0;
+
+    roundScores = [0, 0, 0];
+
+    gameRunning = false;
+
+    document.getElementById("status").textContent =
+        "ゲーム開始を押してください";
+
+    document.getElementById("start").style.display =
+        "inline-block";
+
+    document.getElementById("nextRound").style.display =
+        "none";
 
     updateDisplay();
 }
 
+
+// 最初の表示
 updateDisplay();
 
 </script>
