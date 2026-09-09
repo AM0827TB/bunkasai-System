@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>文化祭シューティング</title>
+
+<style>
+body {
+    font-family: sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    background: #eeeeee;
+}
+
+h1 {
+    font-size: 42px;
+}
+
+#score {
+    font-size: 80px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+#shots {
+    font-size: 30px;
+    margin-bottom: 25px;
+}
+
+button {
+    font-size: 30px;
+    padding: 25px;
+    margin: 10px;
+    border-radius: 15px;
+    border: none;
+}
+
+.scoreButton {
+    min-width: 150px;
+}
+
+#miss {
+    width: 330px;
+}
+
+#reset {
+    font-size: 25px;
+    margin-top: 25px;
+}
+
+#highscore {
+    font-size: 25px;
+    margin-top: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎯 SHOOTING GAME</h1>
+
+<div id="score">0 点</div>
+
+<div id="shots">残り玉数：1000</div>
+
+<div>
+    <button class="scoreButton" onclick="addScore(10)">10点</button>
+    <button class="scoreButton" onclick="addScore(20)">20点</button>
+</div>
+
+<div>
+    <button class="scoreButton" onclick="addScore(30)">30点</button>
+    <button class="scoreButton" onclick="addScore(50)">50点</button>
+</div>
+
+<div>
+    <button class="scoreButton" onclick="addScore(100)">100点</button>
+</div>
+
+<div>
+    <button id="miss" onclick="miss()">ミス</button>
+</div>
+
+<button id="reset" onclick="resetGame()">次のお客さん</button>
+
+<div id="highscore">
+    🏆 最高得点：0点
+</div>
+
+<script>
+
+let score = 0;
+let shots = 1000;
+let highScore = 0;
+
+function updateDisplay() {
+
+    document.getElementById("score").textContent =
+        score + " 点";
+
+    document.getElementById("shots").textContent =
+        "残り玉数：" + shots;
+
+    document.getElementById("highscore").textContent =
+        "🏆 最高得点：" + highScore + "点";
+}
+
+function addScore(points) {
+
+    if (shots <= 0) return;
+
+    score += points;
+    shots--;
+
+    if (score > highScore) {
+        highScore = score;
+    }
+
+    updateDisplay();
+}
+
+function miss() {
+
+    if (shots <= 0) return;
+
+    shots--;
+
+    updateDisplay();
+}
+
+function resetGame() {
+
+    score = 0;
+    shots = 1000;
+
+    updateDisplay();
+}
+
+updateDisplay();
+
+</script>
+
+</body>
+</html>
