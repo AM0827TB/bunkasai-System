@@ -195,10 +195,11 @@ button:active {
 <div id="participantArea">
 
     <input
-        type="number"
+        type="text"
         id="participantNumber"
         placeholder="Challenger番号"
-        min="1"
+        inputmode="numeric"
+        pattern="[0-9]*"
     >
 
 </div>
@@ -876,8 +877,13 @@ window.sendToFirebase = function() {
     }
 
 
+    /*
+       Challenger番号は文字列として扱う。
+       001 → 001 のまま保存する。
+    */
+
     const participant =
-        participantNumber.value;
+        participantNumber.value.trim();
 
 
     const totalScore =
@@ -934,6 +940,15 @@ window.sendToFirebase = function() {
         data
 
     )
+    .then(function() {
+
+        console.log(
+            "Firebase送信成功:",
+            participant,
+            station
+        );
+
+    })
     .catch(function(error) {
 
         console.error(
