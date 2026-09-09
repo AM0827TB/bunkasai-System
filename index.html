@@ -777,6 +777,321 @@ function updateRoundScores() {
 
 updateRoundScores();
 
+<!-- Firebase -->
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    set,
+    onValue
+}
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyBrv8In8AGaFNSMj1CSremQ8CxeQkzrfCg",
+
+    authDomain: "shooting-galaxy.firebaseapp.com",
+
+    databaseURL:
+        "https://shooting-galaxy-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+    projectId: "shooting-galaxy",
+
+    storageBucket:
+        "shooting-galaxy.firebasestorage.app",
+
+    messagingSenderId: "294093816088",
+
+    appId:
+        "1:294093816088:web:a18a7966391d60e2209e6d"
+};
+
+
+const app =
+    initializeApp(firebaseConfig);
+
+const database =
+    getDatabase(app);
+
+
+/*
+    現在の結果をFirebaseへ送信
+*/
+
+function sendToFirebase() {
+
+    if (station === "") return;
+
+    if (participantNumber.value === "") return;
+
+
+    const participant =
+        participantNumber.value;
+
+
+    const data = {
+
+        station: station,
+
+        participant: participant,
+
+        round: currentRound,
+
+        score: score,
+
+        shots: shots,
+
+        status: status.textContent,
+
+        timeLeft: timeLeft,
+
+        roundScores: roundScores,
+
+        updatedAt: Date.now()
+
+    };
+
+
+    set(
+        ref(
+            database,
+            "scores/" +
+            participant +
+            "/" +
+            station
+        ),
+        data
+    );
+
+}
+
+
+/*
+    得点が変わったらFirebaseへ送信
+*/
+
+const originalAddScore =
+    window.addScore;
+
+window.addScore = function(points) {
+
+    originalAddScore(points);
+
+    sendToFirebase();
+
+};
+
+
+/*
+    MISSもFirebaseへ送信
+*/
+
+const originalMiss =
+    window.miss;
+
+window.miss = function() {
+
+    originalMiss();
+
+    sendToFirebase();
+
+};
+
+
+/*
+    ゲーム開始時にも送信
+*/
+
+const originalStartGame =
+    window.startGame;
+
+window.startGame = function() {
+
+    originalStartGame();
+
+    setTimeout(function() {
+
+        sendToFirebase();
+
+    }, 100);
+
+};
+
+
+/*
+    ラウンド終了時
+*/
+
+const originalEndGame =
+    window.endGame;
+
+window.endGame = function() {
+
+    originalEndGame();
+
+    sendToFirebase();
+
+};
+
+
+/*
+    次のラウンド
+*/
+
+const originalNextRound =
+    window.nextRound;
+
+window.nextRound = function() {
+
+    originalNextRound();
+
+    setTimeout(function() {
+
+        sendToFirebase();
+
+    }, 100);
+
+};
+
+
+/*
+    次のお客様
+*/
+
+const originalNextCustomer =
+    window.nextCustomer;
+
+window.nextCustomer = function() {
+
+    originalNextCustomer();
+
+};
+
+
+/*
+    集計画面用
+*/
+
+const aggregationArea =
+    document.createElement("div");
+
+aggregationArea.id =
+    "aggregationArea";
+
+aggregationArea.innerHTML = `
+
+<hr>
+
+<h2>リアルタイム集計</h2>
+
+<div id="firebaseResults">
+    接続中...
+</div>
+
+`;
+
+document.body.appendChild(
+    aggregationArea
+);
+
+
+/*
+    Firebaseからリアルタイム取得
+*/
+
+const scoresRef =
+    ref(database, "scores");
+
+
+onValue(
+    scoresRef,
+    function(snapshot) {
+
+        const data =
+            snapshot.val();
+
+
+        const result =
+            document.getElementById(
+                "firebaseResults"
+            );
+
+
+        if (!data) {
+
+            result.innerHTML =
+                "まだデータがありません";
+
+            return;
+
+        }
+
+
+        let html = "";
+
+
+        for (
+            const participant in data
+        ) {
+
+            html +=
+                "<h3>参加者：" +
+                participant +
+                "</h3>";
+
+
+            for (
+                const stationName in
+                data[participant]
+            ) {
+
+                const item =
+                    data[participant][stationName];
+
+
+                html +=
+
+                    "<div style='border:1px solid white;padding:10px;margin:10px'>" +
+
+                    "担当台：" +
+                    item.station +
+                    "<br>" +
+
+                    "回：" +
+                    item.round +
+                    "<br>" +
+
+                    "得点：" +
+                    item.score +
+                    "点<br>" +
+
+                    "発射数：" +
+                    item.shots +
+                    "<br>" +
+
+                    "状態：" +
+                    item.status +
+
+                    "</div>";
+
+            }
+
+        }
+
+
+        result.innerHTML =
+            html;
+
+    }
+
+);
+
 </script>
 
 </body>
