@@ -190,14 +190,14 @@ button:active {
 </div>
 
 
-<!-- 参加者番号 -->
+<!-- Challenger番号 -->
 
 <div id="participantArea">
 
     <input
         type="number"
         id="participantNumber"
-        placeholder="参加者番号"
+        placeholder="Challenger番号"
         min="1"
     >
 
@@ -205,7 +205,7 @@ button:active {
 
 
 <div id="participantDisplay">
-    参加者番号：未入力
+    Challenger番号：未入力
 </div>
 
 
@@ -291,7 +291,7 @@ button:active {
 </div>
 
 
-<!-- ミス -->
+<!-- MISS -->
 
 <div>
 
@@ -304,7 +304,7 @@ button:active {
 </div>
 
 
-<!-- 操作ボタン -->
+<!-- 集計開始 -->
 
 <div>
 
@@ -317,23 +317,28 @@ button:active {
 </div>
 
 
+<!-- 次のラウンド -->
+
 <div>
 
     <button
         id="nextRound"
-        onclick="nextRound()">
+        onclick="nextRound()"
+        style="display:none;">
         次のラウンド
     </button>
 
 </div>
 
 
+<!-- 次のChallenger -->
+
 <div>
 
     <button
         id="reset"
         onclick="nextCustomer()">
-        次のお客様
+        次のChallenger
     </button>
 
 </div>
@@ -345,14 +350,13 @@ button:active {
 
     1回目：0点<br>
     2回目：0点<br>
-    3回目：0点<br>
+    3回目：0点<br><br>
     合計：0点
 
 </div>
 
 
 <script>
-
 
 /* =========================
    基本設定
@@ -434,11 +438,12 @@ function setStation() {
 
     stationDisplay.textContent =
         "担当台：" + station;
+
 }
 
 
 /* =========================
-   ゲーム開始
+   集計開始
 ========================= */
 
 function startGame() {
@@ -448,8 +453,6 @@ function startGame() {
     }
 
 
-    /* 台番号確認 */
-
     if (station === "") {
 
         alert("担当台を選択してください");
@@ -458,18 +461,16 @@ function startGame() {
     }
 
 
-    /* 参加者番号確認 */
-
     if (participantNumber.value === "") {
 
-        alert("参加者番号を入力してください");
+        alert("Challenger番号を入力してください");
 
         return;
     }
 
 
     participantDisplay.textContent =
-        "参加者番号：" +
+        "Challenger番号：" +
         participantNumber.value;
 
 
@@ -504,12 +505,14 @@ function startGame() {
     startButton.style.display =
         "none";
 
-
     nextRoundButton.style.display =
         "none";
 
 
-    /* タイマー開始 */
+    if (window.sendToFirebase) {
+        window.sendToFirebase();
+    }
+
 
     timer = setInterval(function() {
 
@@ -531,7 +534,7 @@ function startGame() {
 
 
 /* =========================
-   得点
+   得点追加
 ========================= */
 
 function addScore(points) {
@@ -551,6 +554,11 @@ function addScore(points) {
 
     shotsDisplay.textContent =
         "発射数：" + shots;
+
+
+    if (window.sendToFirebase) {
+        window.sendToFirebase();
+    }
 
 }
 
@@ -572,11 +580,16 @@ function miss() {
     shotsDisplay.textContent =
         "発射数：" + shots;
 
+
+    if (window.sendToFirebase) {
+        window.sendToFirebase();
+    }
+
 }
 
 
 /* =========================
-   ゲーム終了
+   ラウンド終了
 ========================= */
 
 function endGame() {
@@ -609,6 +622,11 @@ function endGame() {
         status.textContent =
             "3回 FINISH";
 
+    }
+
+
+    if (window.sendToFirebase) {
+        window.sendToFirebase();
     }
 
 }
@@ -665,15 +683,19 @@ function nextRound() {
     nextRoundButton.style.display =
         "none";
 
-
     startButton.style.display =
         "inline-block";
+
+
+    if (window.sendToFirebase) {
+        window.sendToFirebase();
+    }
 
 }
 
 
 /* =========================
-   次のお客様
+   次のChallenger
 ========================= */
 
 function nextCustomer() {
@@ -704,7 +726,7 @@ function nextCustomer() {
 
 
     participantDisplay.textContent =
-        "参加者番号：未入力";
+        "Challenger番号：未入力";
 
 
     timerDisplay.textContent =
@@ -739,7 +761,7 @@ function nextCustomer() {
 
 
 /* =========================
-   得点表示更新
+   各回の得点表示
 ========================= */
 
 function updateRoundScores() {
@@ -777,7 +799,13 @@ function updateRoundScores() {
 
 updateRoundScores();
 
-<!-- Firebase -->
+</script>
+
+
+<!-- =========================
+     Firebase
+========================= -->
+
 <script type="module">
 
 import { initializeApp }
@@ -786,32 +814,44 @@ from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import {
     getDatabase,
     ref,
-    set,
-    onValue
+    set
 }
 from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 
 
+/* =========================
+   Firebase設定
+========================= */
+
 const firebaseConfig = {
 
-    apiKey: "AIzaSyBrv8In8AGaFNSMj1CSremQ8CxeQkzrfCg",
+    apiKey:
+        "AIzaSyBrv8InAGFNSMj1CSrem9Q8CxeQkzrfCg",
 
-    authDomain: "shooting-galaxy.firebaseapp.com",
+    authDomain:
+        "shooting-galaxy.firebaseapp.com",
 
     databaseURL:
         "https://shooting-galaxy-default-rtdb.asia-southeast1.firebasedatabase.app",
 
-    projectId: "shooting-galaxy",
+    projectId:
+        "shooting-galaxy",
 
     storageBucket:
         "shooting-galaxy.firebasestorage.app",
 
-    messagingSenderId: "294093816088",
+    messagingSenderId:
+        "294093816088",
 
     appId:
         "1:294093816088:web:a18a7966391d60e2209e6d"
+
 };
 
+
+/* =========================
+   Firebase開始
+========================= */
 
 const app =
     initializeApp(firebaseConfig);
@@ -820,45 +860,69 @@ const database =
     getDatabase(app);
 
 
-/*
-    現在の結果をFirebaseへ送信
-*/
+/* =========================
+   Firebaseへ送信
+========================= */
 
-function sendToFirebase() {
+window.sendToFirebase = function() {
 
-    if (station === "") return;
+    if (station === "") {
+        return;
+    }
 
-    if (participantNumber.value === "") return;
+
+    if (participantNumber.value === "") {
+        return;
+    }
 
 
     const participant =
         participantNumber.value;
 
 
+    const totalScore =
+        roundScores[0] +
+        roundScores[1] +
+        roundScores[2];
+
+
     const data = {
 
-        station: station,
+        station:
+            station,
 
-        participant: participant,
+        participant:
+            participant,
 
-        round: currentRound,
+        round:
+            currentRound,
 
-        score: score,
+        score:
+            score,
 
-        shots: shots,
+        shots:
+            shots,
 
-        status: status.textContent,
+        totalScore:
+            totalScore,
 
-        timeLeft: timeLeft,
+        status:
+            status.textContent,
 
-        roundScores: roundScores,
+        timeLeft:
+            timeLeft,
 
-        updatedAt: Date.now()
+        roundScores:
+            roundScores,
+
+        updatedAt:
+            Date.now()
 
     };
 
 
     set(
+
         ref(
             database,
             "scores/" +
@@ -866,233 +930,23 @@ function sendToFirebase() {
             "/" +
             station
         ),
+
         data
-    );
 
-}
+    )
+    .catch(function(error) {
 
+        console.error(
+            "Firebase送信エラー:",
+            error
+        );
 
-/*
-    得点が変わったらFirebaseへ送信
-*/
-
-const originalAddScore =
-    window.addScore;
-
-window.addScore = function(points) {
-
-    originalAddScore(points);
-
-    sendToFirebase();
+    });
 
 };
-
-
-/*
-    MISSもFirebaseへ送信
-*/
-
-const originalMiss =
-    window.miss;
-
-window.miss = function() {
-
-    originalMiss();
-
-    sendToFirebase();
-
-};
-
-
-/*
-    ゲーム開始時にも送信
-*/
-
-const originalStartGame =
-    window.startGame;
-
-window.startGame = function() {
-
-    originalStartGame();
-
-    setTimeout(function() {
-
-        sendToFirebase();
-
-    }, 100);
-
-};
-
-
-/*
-    ラウンド終了時
-*/
-
-const originalEndGame =
-    window.endGame;
-
-window.endGame = function() {
-
-    originalEndGame();
-
-    sendToFirebase();
-
-};
-
-
-/*
-    次のラウンド
-*/
-
-const originalNextRound =
-    window.nextRound;
-
-window.nextRound = function() {
-
-    originalNextRound();
-
-    setTimeout(function() {
-
-        sendToFirebase();
-
-    }, 100);
-
-};
-
-
-/*
-    次のお客様
-*/
-
-const originalNextCustomer =
-    window.nextCustomer;
-
-window.nextCustomer = function() {
-
-    originalNextCustomer();
-
-};
-
-
-/*
-    集計画面用
-*/
-
-const aggregationArea =
-    document.createElement("div");
-
-aggregationArea.id =
-    "aggregationArea";
-
-aggregationArea.innerHTML = `
-
-<hr>
-
-<h2>リアルタイム集計</h2>
-
-<div id="firebaseResults">
-    接続中...
-</div>
-
-`;
-
-document.body.appendChild(
-    aggregationArea
-);
-
-
-/*
-    Firebaseからリアルタイム取得
-*/
-
-const scoresRef =
-    ref(database, "scores");
-
-
-onValue(
-    scoresRef,
-    function(snapshot) {
-
-        const data =
-            snapshot.val();
-
-
-        const result =
-            document.getElementById(
-                "firebaseResults"
-            );
-
-
-        if (!data) {
-
-            result.innerHTML =
-                "まだデータがありません";
-
-            return;
-
-        }
-
-
-        let html = "";
-
-
-        for (
-            const participant in data
-        ) {
-
-            html +=
-                "<h3>参加者：" +
-                participant +
-                "</h3>";
-
-
-            for (
-                const stationName in
-                data[participant]
-            ) {
-
-                const item =
-                    data[participant][stationName];
-
-
-                html +=
-
-                    "<div style='border:1px solid white;padding:10px;margin:10px'>" +
-
-                    "担当台：" +
-                    item.station +
-                    "<br>" +
-
-                    "回：" +
-                    item.round +
-                    "<br>" +
-
-                    "得点：" +
-                    item.score +
-                    "点<br>" +
-
-                    "発射数：" +
-                    item.shots +
-                    "<br>" +
-
-                    "状態：" +
-                    item.status +
-
-                    "</div>";
-
-            }
-
-        }
-
-
-        result.innerHTML =
-            html;
-
-    }
-
-);
 
 </script>
+
 
 </body>
 </html>
