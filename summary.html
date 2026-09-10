@@ -1,9 +1,948 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>SHOOTING GALAXY 集計</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    padding: 20px;
+
+    background: #000000;
+
+    color: #ffffff;
+
+    font-family: Arial, sans-serif;
+
+    text-align: center;
+
+}
+
+h1 {
+
+    font-size: 38px;
+
+    margin: 15px 0 10px;
+
+}
+
+#status {
+
+    font-size: 18px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* =========================
+   表
+========================= */
+
+.tableArea {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+table {
+
+    width: 100%;
+
+    min-width: 700px;
+
+    border-collapse: collapse;
+
+    margin: 0 auto;
+
+    background: #000000;
+
+}
+
+th,
+td {
+
+    border: 2px solid #ffffff;
+
+    padding: 12px 10px;
+
+    font-size: 18px;
+
+    text-align: center;
+
+}
+
+th {
+
+    background: #222222;
+
+    font-weight: bold;
+
+}
+
+.total {
+
+    font-weight: bold;
+
+    font-size: 21px;
+
+}
+
+
+/* =========================
+   順位
+========================= */
+
+.rank {
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+}
+
+
+/* =========================
+   詳細
+========================= */
+
+.details {
+
+    margin-top: 40px;
+
+}
+
+.details h2 {
+
+    font-size: 28px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* =========================
+   ボタン
+========================= */
+
+button {
+
+    font-size: 20px;
+
+    padding: 12px 25px;
+
+    margin: 15px;
+
+    border-radius: 10px;
+
+    border: 2px solid #ffffff;
+
+    background: #000000;
+
+    color: #ffffff;
+
+}
+
+button:active {
+
+    background: #ffffff;
+
+    color: #000000;
+
+}
+
+
+/* =========================
+   データなし
+========================= */
+
+#noData {
+
+    font-size: 22px;
+
+    margin-top: 50px;
+
+    display: none;
+
+}
+
+
+/* =========================
+   スマホ・iPad用
+========================= */
+
+@media (max-width: 700px) {
+
+    h1 {
+
+        font-size: 30px;
+
+    }
+
+    th,
+    td {
+
+        font-size: 16px;
+
+        padding: 10px 8px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>
+SHOOTING GALAXY 集計
+</h1>
+
+
+<div id="status">
+Firebase接続中...
+</div>
+
+
+<!-- =========================
+     総合ランキング
+========================= -->
+
+<div class="tableArea">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>順位</th>
+
+<th>Challenger</th>
+
+<th>台1</th>
+
+<th>台2</th>
+
+<th>台3</th>
+
+<th>総合計</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="rankingBody">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div id="noData">
+
+まだ得点データがありません。
+
+</div>
+
+
+<!-- =========================
+     詳細
+========================= -->
+
+<div class="details">
+
+<h2>
+ラウンド別詳細
+</h2>
+
+
+<div id="detailsArea">
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     更新ボタン
+========================= -->
+
+<button onclick="location.reload()">
+
+画面を更新
+
+</button>
+
+
+<!-- =========================
+     Firebase
+========================= -->
+
+<script type="module">
+
+
+/* =========================
+   Firebase SDK
+========================= */
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+import {
+    getDatabase,
+    ref,
+    onValue
+}
+from
+"https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+
+/* =========================
+   Firebase設定
+========================= */
+
 const firebaseConfig = {
-    apiKey: "AIzaSyBrv8InAGFNSMj1CSrem9Q8CxeQkzrfCg",
-    authDomain: "shooting-galaxy.firebaseapp.com",
-    databaseURL: "https://shooting-galaxy-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "shooting-galaxy",
-    storageBucket: "shooting-galaxy.firebasestorage.app",
-    messagingSenderId: "294093816088",
-    appId: "1:294093816088:web:a18a7966391d60e2209e6d"
+
+    apiKey:
+        "AIzaSyBrv8InAGFNSMj1CSrem9Q8CxeQkzrfCg",
+
+    authDomain:
+        "shooting-galaxy.firebaseapp.com",
+
+    databaseURL:
+        "https://shooting-galaxy-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+    projectId:
+        "shooting-galaxy",
+
+    storageBucket:
+        "shooting-galaxy.firebasestorage.app",
+
+    messagingSenderId:
+        "294093816088",
+
+    appId:
+        "1:294093816088:web:a18a7966391d60e2209e6d"
+
 };
+
+
+/* =========================
+   Firebase開始
+========================= */
+
+const app =
+    initializeApp(firebaseConfig);
+
+
+const database =
+    getDatabase(app);
+
+
+/* =========================
+   scoresを監視
+========================= */
+
+const scoresRef =
+    ref(database, "scores");
+
+
+onValue(
+
+    scoresRef,
+
+    function(snapshot) {
+
+        const data =
+            snapshot.val();
+
+
+        if (!data) {
+
+            document.getElementById(
+                "status"
+            ).textContent =
+                "データなし";
+
+            document.getElementById(
+                "rankingBody"
+            ).innerHTML = "";
+
+            document.getElementById(
+                "detailsArea"
+            ).innerHTML = "";
+
+            document.getElementById(
+                "noData"
+            ).style.display = "block";
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            "リアルタイム集計中";
+
+
+        document.getElementById(
+            "noData"
+        ).style.display = "none";
+
+
+        createRanking(data);
+
+        createDetails(data);
+
+    },
+
+    function(error) {
+
+        console.error(
+            "Firebase読み込みエラー:",
+            error
+        );
+
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            "Firebase読み込みエラー";
+
+    }
+
+);
+
+
+/* =========================
+   数字変換
+========================= */
+
+function toNumber(value) {
+
+    const number =
+        Number(value);
+
+    if (Number.isNaN(number)) {
+
+        return 0;
+
+    }
+
+    return number;
+
+}
+
+
+/* =========================
+   Challengerのランキング作成
+========================= */
+
+function createRanking(data) {
+
+    const challengers = [];
+
+
+    /*
+       scores
+       └ Challenger
+           ├ 台1
+           ├ 台2
+           └ 台3
+    */
+
+
+    Object.keys(data).forEach(
+
+        function(participant) {
+
+            const participantData =
+                data[participant];
+
+
+            let stationTotals = {
+
+                "台1": 0,
+
+                "台2": 0,
+
+                "台3": 0
+
+            };
+
+
+            Object.keys(stationTotals)
+                .forEach(
+
+                function(station) {
+
+                    if (
+                        participantData &&
+                        participantData[station]
+                    ) {
+
+                        stationTotals[station] =
+                            toNumber(
+                                participantData[
+                                    station
+                                ].totalScore
+                            );
+
+                    }
+
+                }
+            );
+
+
+            const total =
+
+                stationTotals["台1"] +
+
+                stationTotals["台2"] +
+
+                stationTotals["台3"];
+
+
+            challengers.push({
+
+                participant:
+                    participant,
+
+                stationTotals:
+                    stationTotals,
+
+                total:
+                    total
+
+            });
+
+        }
+
+    );
+
+
+    /*
+       総合計の高い順
+    */
+
+    challengers.sort(
+
+        function(a, b) {
+
+            return b.total - a.total;
+
+        }
+
+    );
+
+
+    const body =
+        document.getElementById(
+            "rankingBody"
+        );
+
+
+    body.innerHTML = "";
+
+
+    challengers.forEach(
+
+        function(item, index) {
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML =
+
+                "<td class='rank'>" +
+
+                (index + 1) +
+
+                "</td>" +
+
+
+                "<td>" +
+
+                escapeHTML(
+                    item.participant
+                ) +
+
+                "</td>" +
+
+
+                "<td>" +
+
+                item.stationTotals["台1"] +
+
+                "点</td>" +
+
+
+                "<td>" +
+
+                item.stationTotals["台2"] +
+
+                "点</td>" +
+
+
+                "<td>" +
+
+                item.stationTotals["台3"] +
+
+                "点</td>" +
+
+
+                "<td class='total'>" +
+
+                item.total +
+
+                "点</td>";
+
+
+            body.appendChild(row);
+
+        }
+
+    );
+
+}
+
+
+/* =========================
+   詳細表示
+========================= */
+
+function createDetails(data) {
+
+    const area =
+        document.getElementById(
+            "detailsArea"
+        );
+
+
+    area.innerHTML = "";
+
+
+    const participants =
+        Object.keys(data).sort(
+
+            function(a, b) {
+
+                /*
+                   001、002、003の順番にする
+                */
+
+                return Number(a) - Number(b);
+
+            }
+
+        );
+
+
+    participants.forEach(
+
+        function(participant) {
+
+            const participantData =
+                data[participant];
+
+
+            const title =
+                document.createElement("h3");
+
+
+            title.textContent =
+                "Challenger " +
+                participant;
+
+
+            title.style.fontSize =
+                "25px";
+
+
+            title.style.marginTop =
+                "30px";
+
+
+            area.appendChild(title);
+
+
+            const tableArea =
+                document.createElement("div");
+
+
+            tableArea.className =
+                "tableArea";
+
+
+            const table =
+                document.createElement("table");
+
+
+            table.innerHTML =
+
+                "<thead>" +
+
+                "<tr>" +
+
+                "<th>台</th>" +
+
+                "<th>1回目</th>" +
+
+                "<th>2回目</th>" +
+
+                "<th>3回目</th>" +
+
+                "<th>合計</th>" +
+
+                "</tr>" +
+
+                "</thead>" +
+
+                "<tbody></tbody>";
+
+
+            const tbody =
+                table.querySelector(
+                    "tbody"
+                );
+
+
+            let grandRound1 = 0;
+
+            let grandRound2 = 0;
+
+            let grandRound3 = 0;
+
+            let grandTotal = 0;
+
+
+            ["台1", "台2", "台3"].forEach(
+
+                function(station) {
+
+                    let round1 = 0;
+
+                    let round2 = 0;
+
+                    let round3 = 0;
+
+                    let total = 0;
+
+
+                    if (
+                        participantData &&
+                        participantData[station]
+                    ) {
+
+                        const stationData =
+                            participantData[
+                                station
+                            ];
+
+
+                        const rounds =
+                            stationData.roundScores;
+
+
+                        if (rounds) {
+
+                            round1 =
+                                toNumber(
+                                    rounds[0]
+                                );
+
+                            round2 =
+                                toNumber(
+                                    rounds[1]
+                                );
+
+                            round3 =
+                                toNumber(
+                                    rounds[2]
+                                );
+
+                        }
+
+
+                        total =
+                            toNumber(
+                                stationData.totalScore
+                            );
+
+                    }
+
+
+                    grandRound1 +=
+                        round1;
+
+                    grandRound2 +=
+                        round2;
+
+                    grandRound3 +=
+                        round3;
+
+                    grandTotal +=
+                        total;
+
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML =
+
+                        "<td>" +
+
+                        station +
+
+                        "</td>" +
+
+
+                        "<td>" +
+
+                        round1 +
+
+                        "点</td>" +
+
+
+                        "<td>" +
+
+                        round2 +
+
+                        "点</td>" +
+
+
+                        "<td>" +
+
+                        round3 +
+
+                        "点</td>" +
+
+
+                        "<td class='total'>" +
+
+                        total +
+
+                        "点</td>";
+
+
+                    tbody.appendChild(row);
+
+                }
+
+            );
+
+
+            /*
+               3台合計
+            */
+
+            const totalRow =
+                document.createElement("tr");
+
+
+            totalRow.innerHTML =
+
+                "<th>3台合計</th>" +
+
+
+                "<th>" +
+
+                grandRound1 +
+
+                "点</th>" +
+
+
+                "<th>" +
+
+                grandRound2 +
+
+                "点</th>" +
+
+
+                "<th>" +
+
+                grandRound3 +
+
+                "点</th>" +
+
+
+                "<th class='total'>" +
+
+                grandTotal +
+
+                "点</th>";
+
+
+            tbody.appendChild(totalRow);
+
+
+            tableArea.appendChild(table);
+
+            area.appendChild(tableArea);
+
+        }
+
+    );
+
+}
+
+
+/* =========================
+   HTML特殊文字対策
+========================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
