@@ -559,7 +559,8 @@ function miss() {
 
     shotsDisplay.textContent =
         "発射数：" + shots;
-
+const rate = shots === 0 ? 0 : Math.round(hits / shots * 100);
+hitRateDisplay.textContent = "HIT率：" + rate + "%";
 
     if (window.sendToFirebase) {
         window.sendToFirebase();
