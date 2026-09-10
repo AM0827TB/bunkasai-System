@@ -17,91 +17,56 @@
 }
 
 body {
-
     margin: 0;
-
     padding: 20px;
-
     background: #000000;
-
     color: #ffffff;
-
     font-family: Arial, sans-serif;
-
     text-align: center;
-
 }
 
 h1 {
-
     font-size: 38px;
-
-    margin: 15px 0 10px;
-
+    margin: 20px 0 10px;
 }
 
 #status {
-
-    font-size: 18px;
-
-    margin-bottom: 20px;
-
+    font-size: 20px;
+    margin: 15px 0 25px;
 }
 
 
 /* =========================
-   表
+   総合ランキング
 ========================= */
 
 .tableArea {
-
     width: 100%;
-
     overflow-x: auto;
-
 }
 
 table {
-
-    width: 100%;
-
-    min-width: 700px;
-
     border-collapse: collapse;
-
+    width: 100%;
+    min-width: 700px;
     margin: 0 auto;
-
-    background: #000000;
-
 }
 
 th,
 td {
-
     border: 2px solid #ffffff;
-
     padding: 12px 10px;
-
     font-size: 18px;
-
     text-align: center;
-
 }
 
 th {
-
     background: #222222;
-
-    font-weight: bold;
-
 }
 
 .total {
-
+    font-size: 22px;
     font-weight: bold;
-
-    font-size: 21px;
-
 }
 
 
@@ -110,11 +75,8 @@ th {
 ========================= */
 
 .rank {
-
-    font-size: 22px;
-
+    font-size: 24px;
     font-weight: bold;
-
 }
 
 
@@ -122,49 +84,14 @@ th {
    詳細
 ========================= */
 
-.details {
-
+#detailsArea {
     margin-top: 40px;
-
 }
 
-.details h2 {
-
+.challengerTitle {
     font-size: 28px;
-
-    margin-bottom: 20px;
-
-}
-
-
-/* =========================
-   ボタン
-========================= */
-
-button {
-
-    font-size: 20px;
-
-    padding: 12px 25px;
-
-    margin: 15px;
-
-    border-radius: 10px;
-
-    border: 2px solid #ffffff;
-
-    background: #000000;
-
-    color: #ffffff;
-
-}
-
-button:active {
-
-    background: #ffffff;
-
-    color: #000000;
-
+    margin-top: 45px;
+    margin-bottom: 15px;
 }
 
 
@@ -173,35 +100,50 @@ button:active {
 ========================= */
 
 #noData {
-
-    font-size: 22px;
-
-    margin-top: 50px;
-
     display: none;
-
+    font-size: 22px;
+    margin-top: 50px;
 }
 
 
 /* =========================
-   スマホ・iPad用
+   更新ボタン
+========================= */
+
+button {
+    font-size: 20px;
+    padding: 12px 25px;
+    margin: 30px 10px;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+    background: #000000;
+    color: #ffffff;
+}
+
+button:active {
+    background: #ffffff;
+    color: #000000;
+}
+
+
+/* =========================
+   iPad用
 ========================= */
 
 @media (max-width: 700px) {
 
     h1 {
-
         font-size: 30px;
-
     }
 
     th,
     td {
-
         font-size: 16px;
-
         padding: 10px 8px;
+    }
 
+    .total {
+        font-size: 19px;
     }
 
 }
@@ -263,9 +205,7 @@ Firebase接続中...
 
 
 <div id="noData">
-
 まだ得点データがありません。
-
 </div>
 
 
@@ -273,17 +213,7 @@ Firebase接続中...
      詳細
 ========================= -->
 
-<div class="details">
-
-<h2>
-ラウンド別詳細
-</h2>
-
-
 <div id="detailsArea">
-
-</div>
-
 </div>
 
 
@@ -292,9 +222,7 @@ Firebase接続中...
 ========================= -->
 
 <button onclick="location.reload()">
-
 画面を更新
-
 </button>
 
 
@@ -368,7 +296,7 @@ const database =
 
 
 /* =========================
-   scoresを監視
+   scoresを取得
 ========================= */
 
 const scoresRef =
@@ -385,12 +313,15 @@ onValue(
             snapshot.val();
 
 
+        console.log("Firebaseデータ:", data);
+
+
         if (!data) {
 
             document.getElementById(
                 "status"
             ).textContent =
-                "データなし";
+                "まだデータがありません";
 
             document.getElementById(
                 "rankingBody"
@@ -426,6 +357,7 @@ onValue(
 
     },
 
+
     function(error) {
 
         console.error(
@@ -445,7 +377,7 @@ onValue(
 
 
 /* =========================
-   数字変換
+   数字に変換
 ========================= */
 
 function toNumber(value) {
@@ -453,7 +385,7 @@ function toNumber(value) {
     const number =
         Number(value);
 
-    if (Number.isNaN(number)) {
+    if (isNaN(number)) {
 
         return 0;
 
@@ -465,7 +397,7 @@ function toNumber(value) {
 
 
 /* =========================
-   Challengerのランキング作成
+   総合ランキング
 ========================= */
 
 function createRanking(data) {
@@ -474,13 +406,8 @@ function createRanking(data) {
 
 
     /*
-       scores
-       └ Challenger
-           ├ 台1
-           ├ 台2
-           └ 台3
+       Challengerごとに処理
     */
-
 
     Object.keys(data).forEach(
 
@@ -490,47 +417,68 @@ function createRanking(data) {
                 data[participant];
 
 
-            let stationTotals = {
+            let station1 = 0;
 
-                "台1": 0,
+            let station2 = 0;
 
-                "台2": 0,
-
-                "台3": 0
-
-            };
+            let station3 = 0;
 
 
-            Object.keys(stationTotals)
-                .forEach(
+            /* 台1 */
 
-                function(station) {
+            if (
+                participantData &&
+                participantData["台1"]
+            ) {
 
-                    if (
-                        participantData &&
-                        participantData[station]
-                    ) {
+                station1 =
+                    toNumber(
+                        participantData["台1"]
+                            .totalScore
+                    );
 
-                        stationTotals[station] =
-                            toNumber(
-                                participantData[
-                                    station
-                                ].totalScore
-                            );
+            }
 
-                    }
 
-                }
-            );
+            /* 台2 */
 
+            if (
+                participantData &&
+                participantData["台2"]
+            ) {
+
+                station2 =
+                    toNumber(
+                        participantData["台2"]
+                            .totalScore
+                    );
+
+            }
+
+
+            /* 台3 */
+
+            if (
+                participantData &&
+                participantData["台3"]
+            ) {
+
+                station3 =
+                    toNumber(
+                        participantData["台3"]
+                            .totalScore
+                    );
+
+            }
+
+
+            /* 3台の合計 */
 
             const total =
 
-                stationTotals["台1"] +
-
-                stationTotals["台2"] +
-
-                stationTotals["台3"];
+                station1 +
+                station2 +
+                station3;
 
 
             challengers.push({
@@ -538,8 +486,14 @@ function createRanking(data) {
                 participant:
                     participant,
 
-                stationTotals:
-                    stationTotals,
+                station1:
+                    station1,
+
+                station2:
+                    station2,
+
+                station3:
+                    station3,
 
                 total:
                     total
@@ -566,13 +520,13 @@ function createRanking(data) {
     );
 
 
-    const body =
+    const rankingBody =
         document.getElementById(
             "rankingBody"
         );
 
 
-    body.innerHTML = "";
+    rankingBody.innerHTML = "";
 
 
     challengers.forEach(
@@ -603,21 +557,21 @@ function createRanking(data) {
 
                 "<td>" +
 
-                item.stationTotals["台1"] +
+                item.station1 +
 
                 "点</td>" +
 
 
                 "<td>" +
 
-                item.stationTotals["台2"] +
+                item.station2 +
 
                 "点</td>" +
 
 
                 "<td>" +
 
-                item.stationTotals["台3"] +
+                item.station3 +
 
                 "点</td>" +
 
@@ -629,7 +583,7 @@ function createRanking(data) {
                 "点</td>";
 
 
-            body.appendChild(row);
+            rankingBody.appendChild(row);
 
         }
 
@@ -639,7 +593,7 @@ function createRanking(data) {
 
 
 /* =========================
-   詳細表示
+   ラウンド別詳細
 ========================= */
 
 function createDetails(data) {
@@ -653,14 +607,18 @@ function createDetails(data) {
     area.innerHTML = "";
 
 
+    /*
+       Challenger番号を数字順にする
+
+       001
+       002
+       003
+    */
+
     const participants =
         Object.keys(data).sort(
 
             function(a, b) {
-
-                /*
-                   001、002、003の順番にする
-                */
 
                 return Number(a) - Number(b);
 
@@ -677,8 +635,14 @@ function createDetails(data) {
                 data[participant];
 
 
+            /* Challengerタイトル */
+
             const title =
-                document.createElement("h3");
+                document.createElement("div");
+
+
+            title.className =
+                "challengerTitle";
 
 
             title.textContent =
@@ -686,16 +650,10 @@ function createDetails(data) {
                 participant;
 
 
-            title.style.fontSize =
-                "25px";
-
-
-            title.style.marginTop =
-                "30px";
-
-
             area.appendChild(title);
 
+
+            /* 表 */
 
             const tableArea =
                 document.createElement("div");
@@ -729,6 +687,7 @@ function createDetails(data) {
 
                 "</thead>" +
 
+
                 "<tbody></tbody>";
 
 
@@ -738,14 +697,18 @@ function createDetails(data) {
                 );
 
 
-            let grandRound1 = 0;
+            let totalRound1 = 0;
 
-            let grandRound2 = 0;
+            let totalRound2 = 0;
 
-            let grandRound3 = 0;
+            let totalRound3 = 0;
 
-            let grandTotal = 0;
+            let totalAll = 0;
 
+
+            /*
+               台1～台3
+            */
 
             ["台1", "台2", "台3"].forEach(
 
@@ -771,48 +734,64 @@ function createDetails(data) {
                             ];
 
 
-                        const rounds =
-                            stationData.roundScores;
+                        /*
+                           roundScores
 
+                           [0] = 1回目
+                           [1] = 2回目
+                           [2] = 3回目
+                        */
 
-                        if (rounds) {
+                        if (
+                            stationData.roundScores
+                        ) {
 
                             round1 =
                                 toNumber(
-                                    rounds[0]
+                                    stationData
+                                        .roundScores[0]
                                 );
+
 
                             round2 =
                                 toNumber(
-                                    rounds[1]
+                                    stationData
+                                        .roundScores[1]
                                 );
+
 
                             round3 =
                                 toNumber(
-                                    rounds[2]
+                                    stationData
+                                        .roundScores[2]
                                 );
 
                         }
 
 
+                        /*
+                           totalScore
+                        */
+
                         total =
                             toNumber(
-                                stationData.totalScore
+                                stationData
+                                    .totalScore
                             );
 
                     }
 
 
-                    grandRound1 +=
+                    totalRound1 +=
                         round1;
 
-                    grandRound2 +=
+                    totalRound2 +=
                         round2;
 
-                    grandRound3 +=
+                    totalRound3 +=
                         round3;
 
-                    grandTotal +=
+                    totalAll +=
                         total;
 
 
@@ -879,28 +858,28 @@ function createDetails(data) {
 
                 "<th>" +
 
-                grandRound1 +
+                totalRound1 +
 
                 "点</th>" +
 
 
                 "<th>" +
 
-                grandRound2 +
+                totalRound2 +
 
                 "点</th>" +
 
 
                 "<th>" +
 
-                grandRound3 +
+                totalRound3 +
 
                 "点</th>" +
 
 
                 "<th class='total'>" +
 
-                grandTotal +
+                totalAll +
 
                 "点</th>";
 
@@ -920,7 +899,7 @@ function createDetails(data) {
 
 
 /* =========================
-   HTML特殊文字対策
+   HTML安全対策
 ========================= */
 
 function escapeHTML(value) {
