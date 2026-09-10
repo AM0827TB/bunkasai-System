@@ -8,143 +8,140 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-<title>SHOOTING GALAXY 集計</title>
+<title>GALAXY SHOTTER 集計</title>
 
 <style>
 
-* {
-    box-sizing: border-box;
-}
-
 body {
+
     margin: 0;
+
     padding: 20px;
+
     background: #000000;
+
     color: #ffffff;
+
     font-family: Arial, sans-serif;
-    text-align: center;
+
 }
 
 h1 {
-    font-size: 38px;
-    margin: 20px 0 10px;
+
+    text-align: center;
+
+    font-size: 40px;
+
+    margin-bottom: 30px;
+
 }
 
-#status {
+h2 {
+
+    margin-top: 40px;
+
+    border-bottom: 2px solid #ffffff;
+
+    padding-bottom: 10px;
+
+}
+
+.status {
+
+    text-align: center;
+
     font-size: 20px;
-    margin: 15px 0 25px;
+
+    margin: 20px;
+
 }
 
+.deleteAllArea {
 
-/* =========================
-   総合ランキング
-========================= */
+    text-align: center;
 
-.tableArea {
-    width: 100%;
-    overflow-x: auto;
+    margin: 30px 0;
+
+}
+
+button {
+
+    font-size: 18px;
+
+    padding: 12px 20px;
+
+    margin: 5px;
+
+    border-radius: 10px;
+
+    border: 2px solid #ffffff;
+
+    background: #000000;
+
+    color: #ffffff;
+
+}
+
+button:active {
+
+    background: #ffffff;
+
+    color: #000000;
+
+}
+
+.deleteButton {
+
+    font-size: 15px;
+
+    padding: 8px 12px;
+
 }
 
 table {
-    border-collapse: collapse;
+
     width: 100%;
-    min-width: 700px;
-    margin: 0 auto;
+
+    border-collapse: collapse;
+
+    margin-bottom: 30px;
+
+    background: #000000;
+
 }
 
 th,
 td {
-    border: 2px solid #ffffff;
-    padding: 12px 10px;
-    font-size: 18px;
+
+    border: 1px solid #ffffff;
+
+    padding: 10px;
+
     text-align: center;
+
 }
 
 th {
+
     background: #222222;
+
 }
 
 .total {
-    font-size: 22px;
-    font-weight: bold;
-}
 
-
-/* =========================
-   順位
-========================= */
-
-.rank {
     font-size: 24px;
+
     font-weight: bold;
+
 }
 
+.noData {
 
-/* =========================
-   詳細
-========================= */
+    text-align: center;
 
-#detailsArea {
-    margin-top: 40px;
-}
-
-.challengerTitle {
-    font-size: 28px;
-    margin-top: 45px;
-    margin-bottom: 15px;
-}
-
-
-/* =========================
-   データなし
-========================= */
-
-#noData {
-    display: none;
     font-size: 22px;
-    margin-top: 50px;
-}
 
-
-/* =========================
-   更新ボタン
-========================= */
-
-button {
-    font-size: 20px;
-    padding: 12px 25px;
-    margin: 30px 10px;
-    border-radius: 10px;
-    border: 2px solid #ffffff;
-    background: #000000;
-    color: #ffffff;
-}
-
-button:active {
-    background: #ffffff;
-    color: #000000;
-}
-
-
-/* =========================
-   iPad用
-========================= */
-
-@media (max-width: 700px) {
-
-    h1 {
-        font-size: 30px;
-    }
-
-    th,
-    td {
-        font-size: 16px;
-        padding: 10px 8px;
-    }
-
-    .total {
-        font-size: 19px;
-    }
+    margin: 40px;
 
 }
 
@@ -156,111 +153,86 @@ button:active {
 <body>
 
 
-<h1>
-SHOOTING GALAXY 集計
-</h1>
+<h1>GALAXY SHOTTER 集計</h1>
 
 
-<div id="status">
+<div id="status"
+     class="status">
+
 Firebase接続中...
-</div>
-
-
-<!-- =========================
-     総合ランキング
-========================= -->
-
-<div class="tableArea">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>順位</th>
-
-<th>Challenger</th>
-
-<th>台1</th>
-
-<th>台2</th>
-
-<th>台3</th>
-
-<th>総合計</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="rankingBody">
-
-</tbody>
-
-</table>
 
 </div>
 
 
-<div id="noData">
-まだ得点データがありません。
-</div>
+<!-- 全データ削除 -->
 
+<div class="deleteAllArea">
 
-<!-- =========================
-     詳細
-========================= -->
+<button
+    onclick="deleteAllData()">
 
-<div id="detailsArea">
-</div>
+🗑 全データ削除
 
-
-<!-- =========================
-     更新ボタン
-========================= -->
-
-<button onclick="location.reload()">
-画面を更新
 </button>
 
+</div>
 
-<!-- =========================
-     Firebase
-========================= -->
+
+<!-- 総合ランキング -->
+
+<h2>🏆 総合ランキング</h2>
+
+
+<div id="ranking">
+
+</div>
+
+
+<!-- Challenger詳細 -->
+
+<h2>Challenger別 詳細</h2>
+
+
+<div id="details">
+
+</div>
+
+
+<!-- Firebase -->
 
 <script type="module">
 
 
-/* =========================
-   Firebase SDK
-========================= */
+import { initializeApp }
 
-import {
-    initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
 
 import {
+
     getDatabase,
+
     ref,
-    onValue
+
+    onValue,
+
+    remove
+
 }
-from
-"https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
 
 
 /* =========================
    Firebase設定
 ========================= */
 
+
 const firebaseConfig = {
 
     apiKey:
-        "AIzaSyBrv8InAGFNSMj1CSrem9Q8CxeQkzrfCg",
+        "AIzaSyBrv8In8AGaFNSMj1CSremQ8CxeQkzrfCg",
 
     authDomain:
         "shooting-galaxy.firebaseapp.com",
@@ -283,9 +255,11 @@ const firebaseConfig = {
 };
 
 
+
 /* =========================
    Firebase開始
 ========================= */
+
 
 const app =
     initializeApp(firebaseConfig);
@@ -295,12 +269,14 @@ const database =
     getDatabase(app);
 
 
-/* =========================
-   scoresを取得
-========================= */
-
 const scoresRef =
     ref(database, "scores");
+
+
+
+/* =========================
+   データ読み込み
+========================= */
 
 
 onValue(
@@ -309,109 +285,75 @@ onValue(
 
     function(snapshot) {
 
+
         const data =
             snapshot.val();
 
 
-        console.log("Firebaseデータ:", data);
-
-
-        if (!data) {
-
-            document.getElementById(
-                "status"
-            ).textContent =
-                "まだデータがありません";
-
-            document.getElementById(
-                "rankingBody"
-            ).innerHTML = "";
-
-            document.getElementById(
-                "detailsArea"
-            ).innerHTML = "";
-
-            document.getElementById(
-                "noData"
-            ).style.display = "block";
-
-            return;
-
-        }
-
-
-        document.getElementById(
-            "status"
-        ).textContent =
+        document.getElementById("status")
+            .textContent =
             "リアルタイム集計中";
-
-
-        document.getElementById(
-            "noData"
-        ).style.display = "none";
 
 
         createRanking(data);
 
+
         createDetails(data);
+
 
     },
 
-
     function(error) {
 
-        console.error(
-            "Firebase読み込みエラー:",
-            error
-        );
+
+        console.error(error);
 
 
-        document.getElementById(
-            "status"
-        ).textContent =
+        document.getElementById("status")
+            .textContent =
             "Firebase読み込みエラー";
+
 
     }
 
 );
 
 
-/* =========================
-   数字に変換
-========================= */
-
-function toNumber(value) {
-
-    const number =
-        Number(value);
-
-    if (isNaN(number)) {
-
-        return 0;
-
-    }
-
-    return number;
-
-}
-
 
 /* =========================
    総合ランキング
 ========================= */
 
+
 function createRanking(data) {
 
-    const challengers = [];
+
+    const area =
+        document.getElementById("ranking");
 
 
-    /*
-       Challengerごとに処理
-    */
+    area.innerHTML = "";
+
+
+    if (!data) {
+
+
+        area.innerHTML =
+            '<div class="noData">まだ得点データがありません。</div>';
+
+
+        return;
+
+    }
+
+
+    const ranking = [];
+
 
     Object.keys(data).forEach(
 
         function(participant) {
+
 
             const participantData =
                 data[participant];
@@ -424,64 +366,43 @@ function createRanking(data) {
             let station3 = 0;
 
 
-            /* 台1 */
-
-            if (
-                participantData &&
-                participantData["台1"]
-            ) {
+            if (participantData["台1"]) {
 
                 station1 =
-                    toNumber(
-                        participantData["台1"]
-                            .totalScore
-                    );
+                    Number(
+                        participantData["台1"].totalScore
+                    ) || 0;
 
             }
 
 
-            /* 台2 */
-
-            if (
-                participantData &&
-                participantData["台2"]
-            ) {
+            if (participantData["台2"]) {
 
                 station2 =
-                    toNumber(
-                        participantData["台2"]
-                            .totalScore
-                    );
+                    Number(
+                        participantData["台2"].totalScore
+                    ) || 0;
 
             }
 
 
-            /* 台3 */
-
-            if (
-                participantData &&
-                participantData["台3"]
-            ) {
+            if (participantData["台3"]) {
 
                 station3 =
-                    toNumber(
-                        participantData["台3"]
-                            .totalScore
-                    );
+                    Number(
+                        participantData["台3"].totalScore
+                    ) || 0;
 
             }
 
 
-            /* 3台の合計 */
-
             const total =
-
                 station1 +
                 station2 +
                 station3;
 
 
-            challengers.push({
+            ranking.push({
 
                 participant:
                     participant,
@@ -500,16 +421,13 @@ function createRanking(data) {
 
             });
 
+
         }
 
     );
 
 
-    /*
-       総合計の高い順
-    */
-
-    challengers.sort(
+    ranking.sort(
 
         function(a, b) {
 
@@ -520,376 +438,262 @@ function createRanking(data) {
     );
 
 
-    const rankingBody =
-        document.getElementById(
-            "rankingBody"
-        );
+    let html = `
+
+<table>
+
+<tr>
+
+<th>順位</th>
+
+<th>Challenger</th>
+
+<th>台1</th>
+
+<th>台2</th>
+
+<th>台3</th>
+
+<th>総合計</th>
+
+<th>削除</th>
+
+</tr>
+
+`;
 
 
-    rankingBody.innerHTML = "";
-
-
-    challengers.forEach(
+    ranking.forEach(
 
         function(item, index) {
 
-            const row =
-                document.createElement("tr");
 
+            html += `
 
-            row.innerHTML =
+<tr>
 
-                "<td class='rank'>" +
+<td>
+${index + 1}
+</td>
 
-                (index + 1) +
+<td>
+${item.participant}
+</td>
 
-                "</td>" +
+<td>
+${item.station1}
+</td>
 
+<td>
+${item.station2}
+</td>
 
-                "<td>" +
+<td>
+${item.station3}
+</td>
 
-                escapeHTML(
-                    item.participant
-                ) +
+<td class="total">
+${item.total}
+</td>
 
-                "</td>" +
+<td>
 
+<button
+    class="deleteButton"
+    onclick="deleteParticipant('${item.participant}')">
 
-                "<td>" +
+🗑 削除
 
-                item.station1 +
+</button>
 
-                "点</td>" +
+</td>
 
+</tr>
 
-                "<td>" +
+`;
 
-                item.station2 +
-
-                "点</td>" +
-
-
-                "<td>" +
-
-                item.station3 +
-
-                "点</td>" +
-
-
-                "<td class='total'>" +
-
-                item.total +
-
-                "点</td>";
-
-
-            rankingBody.appendChild(row);
 
         }
 
     );
 
+
+    html += `
+
+</table>
+
+`;
+
+
+    area.innerHTML =
+        html;
+
 }
 
 
+
 /* =========================
-   ラウンド別詳細
+   Challenger詳細
 ========================= */
+
 
 function createDetails(data) {
 
+
     const area =
-        document.getElementById(
-            "detailsArea"
-        );
+        document.getElementById("details");
 
 
     area.innerHTML = "";
 
 
-    /*
-       Challenger番号を数字順にする
+    if (!data) {
 
-       001
-       002
-       003
-    */
+        return;
 
-    const participants =
-        Object.keys(data).sort(
-
-            function(a, b) {
-
-                return Number(a) - Number(b);
-
-            }
-
-        );
+    }
 
 
-    participants.forEach(
+    Object.keys(data).forEach(
 
         function(participant) {
+
 
             const participantData =
                 data[participant];
 
 
-            /* Challengerタイトル */
+            let html = `
 
-            const title =
-                document.createElement("div");
+<h3>
 
+Challenger ${participant}
 
-            title.className =
-                "challengerTitle";
+</h3>
 
+<table>
 
-            title.textContent =
-                "Challenger " +
-                participant;
+<tr>
 
+<th>台</th>
 
-            area.appendChild(title);
+<th>1回目</th>
 
+<th>2回目</th>
 
-            /* 表 */
+<th>3回目</th>
 
-            const tableArea =
-                document.createElement("div");
+<th>合計</th>
 
+</tr>
 
-            tableArea.className =
-                "tableArea";
-
-
-            const table =
-                document.createElement("table");
+`;
 
 
-            table.innerHTML =
+            let grandTotal = 0;
 
-                "<thead>" +
-
-                "<tr>" +
-
-                "<th>台</th>" +
-
-                "<th>1回目</th>" +
-
-                "<th>2回目</th>" +
-
-                "<th>3回目</th>" +
-
-                "<th>合計</th>" +
-
-                "</tr>" +
-
-                "</thead>" +
-
-
-                "<tbody></tbody>";
-
-
-            const tbody =
-                table.querySelector(
-                    "tbody"
-                );
-
-
-            let totalRound1 = 0;
-
-            let totalRound2 = 0;
-
-            let totalRound3 = 0;
-
-            let totalAll = 0;
-
-
-            /*
-               台1～台3
-            */
 
             ["台1", "台2", "台3"].forEach(
 
                 function(station) {
 
-                    let round1 = 0;
 
-                    let round2 = 0;
-
-                    let round3 = 0;
-
-                    let total = 0;
+                    const stationData =
+                        participantData[station];
 
 
-                    if (
-                        participantData &&
-                        participantData[station]
-                    ) {
+                    if (!stationData) {
 
-                        const stationData =
-                            participantData[
-                                station
-                            ];
-
-
-                        /*
-                           roundScores
-
-                           [0] = 1回目
-                           [1] = 2回目
-                           [2] = 3回目
-                        */
-
-                        if (
-                            stationData.roundScores
-                        ) {
-
-                            round1 =
-                                toNumber(
-                                    stationData
-                                        .roundScores[0]
-                                );
-
-
-                            round2 =
-                                toNumber(
-                                    stationData
-                                        .roundScores[1]
-                                );
-
-
-                            round3 =
-                                toNumber(
-                                    stationData
-                                        .roundScores[2]
-                                );
-
-                        }
-
-
-                        /*
-                           totalScore
-                        */
-
-                        total =
-                            toNumber(
-                                stationData
-                                    .totalScore
-                            );
+                        return;
 
                     }
 
 
-                    totalRound1 +=
-                        round1;
-
-                    totalRound2 +=
-                        round2;
-
-                    totalRound3 +=
-                        round3;
-
-                    totalAll +=
-                        total;
+                    const rounds =
+                        stationData.roundScores ||
+                        [0, 0, 0];
 
 
-                    const row =
-                        document.createElement("tr");
+                    const round1 =
+                        Number(rounds[0]) || 0;
 
 
-                    row.innerHTML =
-
-                        "<td>" +
-
-                        station +
-
-                        "</td>" +
+                    const round2 =
+                        Number(rounds[1]) || 0;
 
 
-                        "<td>" +
-
-                        round1 +
-
-                        "点</td>" +
+                    const round3 =
+                        Number(rounds[2]) || 0;
 
 
-                        "<td>" +
-
-                        round2 +
-
-                        "点</td>" +
-
-
-                        "<td>" +
-
-                        round3 +
-
-                        "点</td>" +
+                    const total =
+                        Number(
+                            stationData.totalScore
+                        ) || 0;
 
 
-                        "<td class='total'>" +
-
-                        total +
-
-                        "点</td>";
+                    grandTotal += total;
 
 
-                    tbody.appendChild(row);
+                    html += `
+
+<tr>
+
+<td>
+${station}
+</td>
+
+<td>
+${round1}
+</td>
+
+<td>
+${round2}
+</td>
+
+<td>
+${round3}
+</td>
+
+<td class="total">
+${total}
+</td>
+
+</tr>
+
+`;
 
                 }
 
             );
 
 
-            /*
-               3台合計
-            */
+            html += `
 
-            const totalRow =
-                document.createElement("tr");
+<tr>
 
+<td colspan="4"
+    class="total">
 
-            totalRow.innerHTML =
+3台合計
 
-                "<th>3台合計</th>" +
+</td>
 
+<td class="total">
 
-                "<th>" +
+${grandTotal}
 
-                totalRound1 +
+</td>
 
-                "点</th>" +
+</tr>
 
+</table>
 
-                "<th>" +
-
-                totalRound2 +
-
-                "点</th>" +
+`;
 
 
-                "<th>" +
-
-                totalRound3 +
-
-                "点</th>" +
-
-
-                "<th class='total'>" +
-
-                totalAll +
-
-                "点</th>";
-
-
-            tbody.appendChild(totalRow);
-
-
-            tableArea.appendChild(table);
-
-            area.appendChild(tableArea);
+            area.innerHTML +=
+                html;
 
         }
 
@@ -898,25 +702,145 @@ function createDetails(data) {
 }
 
 
+
 /* =========================
-   HTML安全対策
+   Challenger削除
 ========================= */
 
-function escapeHTML(value) {
 
-    return String(value)
+window.deleteParticipant =
+    function(participant) {
 
-        .replace(/&/g, "&amp;")
 
-        .replace(/</g, "&lt;")
+        const answer =
+            confirm(
 
-        .replace(/>/g, "&gt;")
+                "Challenger " +
+                participant +
+                " のデータを全部削除しますか？"
 
-        .replace(/"/g, "&quot;")
+            );
 
-        .replace(/'/g, "&#039;");
 
-}
+        if (!answer) {
+
+            return;
+
+        }
+
+
+        remove(
+
+            ref(
+                database,
+                "scores/" + participant
+            )
+
+        )
+
+        .then(
+
+            function() {
+
+                alert(
+                    "Challenger " +
+                    participant +
+                    " のデータを削除しました。"
+                );
+
+            }
+
+        )
+
+        .catch(
+
+            function(error) {
+
+                console.error(error);
+
+                alert(
+                    "削除に失敗しました。"
+                );
+
+            }
+
+        );
+
+    };
+
+
+
+/* =========================
+   全データ削除
+========================= */
+
+
+window.deleteAllData =
+    function() {
+
+
+        const answer1 =
+            confirm(
+                "本当に全Challengerのデータを削除しますか？"
+            );
+
+
+        if (!answer1) {
+
+            return;
+
+        }
+
+
+        const answer2 =
+            confirm(
+                "⚠️ この操作は元に戻せません。本当に削除しますか？"
+            );
+
+
+        if (!answer2) {
+
+            return;
+
+        }
+
+
+        remove(
+
+            ref(
+                database,
+                "scores"
+            )
+
+        )
+
+        .then(
+
+            function() {
+
+                alert(
+                    "全データを削除しました。"
+                );
+
+            }
+
+        )
+
+        .catch(
+
+            function(error) {
+
+                console.error(error);
+
+                alert(
+                    "削除に失敗しました。"
+                );
+
+            }
+
+        );
+
+    };
 
 
 </script>
