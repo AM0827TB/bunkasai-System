@@ -99,6 +99,11 @@ h1 {
 
 #shots {
     font-size: 25px;
+    margin-bottom: 10px;
+}
+
+#hitRateDisplay {
+    font-size: 25px;
     margin-bottom: 20px;
 }
 
@@ -248,20 +253,29 @@ button:active {
 </div>
 
 
+<!-- HIT率 -->
+
+<div id="hitRateDisplay">
+    HIT率：0%
+</div>
+
+
 <!-- 得点ボタン -->
 
-<div>style="display: flex; gap: 10px; justify-content: center;">
+<div style="display: flex; gap: 10px; justify-content: center;">
 
     <button
         class="scoreButton"
         onclick="addScore(10)">
         10点
     </button>
+
     <button
         class="scoreButton"
         onclick="addScore(50)">
         50点
     </button>
+
     <button
         class="scoreButton"
         onclick="addScore(100)">
@@ -328,10 +342,11 @@ button:active {
 
 <div id="roundScores">
 
-    1回目：0点<br>
-    2回目：0点<br>
-    3回目：0点<br><br>
-    合計：0点
+    1回目：0点 / HIT率：0%<br>
+    2回目：0点 / HIT率：0%<br>
+    3回目：0点 / HIT率：0%<br><br>
+    合計：0点<br>
+    3回合計HIT率：0%
 
 </div>
 
@@ -352,11 +367,17 @@ let score = 0;
 
 let shots = 0;
 
+let hits = 0;
+
 let timer = null;
 
 let gameRunning = false;
 
 let roundScores = [0, 0, 0];
+
+let roundShots = [0, 0, 0];
+
+let roundHits = [0, 0, 0];
 
 
 /* =========================
@@ -378,6 +399,9 @@ const roundDisplay =
 const shotsDisplay =
     document.getElementById("shots");
 
+const hitRateDisplay =
+    document.getElementById("hitRateDisplay");
+
 const roundScoresDisplay =
     document.getElementById("roundScores");
 
@@ -398,6 +422,23 @@ const startButton =
 
 const nextRoundButton =
     document.getElementById("nextRound");
+
+
+/* =========================
+   HIT率更新
+========================= */
+
+function updateHitRate() {
+
+    const rate =
+        shots === 0
+            ? 0
+            : Math.round(hits / shots * 100);
+
+    hitRateDisplay.textContent =
+        "HIT率：" + rate + "%";
+
+}
 
 
 /* =========================
@@ -463,12 +504,21 @@ function startGame() {
 
     shots = 0;
 
+    hits = 0;
+
+
+    roundShots[currentRound - 1] = 0;
+
+    roundHits[currentRound - 1] = 0;
+
 
     scoreDisplay.textContent =
         score;
 
     shotsDisplay.textContent =
         "発射数：" + shots;
+
+    updateHitRate();
 
     timerDisplay.textContent =
         timeLeft;
@@ -487,6 +537,9 @@ function startGame() {
 
     nextRoundButton.style.display =
         "none";
+
+
+    updateRoundScores();
 
 
     if (window.sendToFirebase) {
@@ -528,12 +581,26 @@ function addScore(points) {
 
     shots++;
 
+    hits++;
+
+
+    roundShots[currentRound - 1] =
+        shots;
+
+    roundHits[currentRound - 1] =
+        hits;
+
 
     scoreDisplay.textContent =
         score;
 
     shotsDisplay.textContent =
         "発射数：" + shots;
+
+
+    updateHitRate();
+
+    updateRoundScores();
 
 
     if (window.sendToFirebase) {
@@ -557,10 +624,21 @@ function miss() {
     shots++;
 
 
+    roundShots[currentRound - 1] =
+        shots;
+
+    roundHits[currentRound - 1] =
+        hits;
+
+
     shotsDisplay.textContent =
         "発射数：" + shots;
-const rate = shots === 0 ? 0 : Math.round(hits / shots * 100);
-hitRateDisplay.textContent = "HIT率：" + rate + "%";
+
+
+    updateHitRate();
+
+    updateRoundScores();
+
 
     if (window.sendToFirebase) {
         window.sendToFirebase();
@@ -584,6 +662,12 @@ function endGame() {
 
     roundScores[currentRound - 1] =
         score;
+
+    roundShots[currentRound - 1] =
+        shots;
+
+    roundHits[currentRound - 1] =
+        hits;
 
 
     status.textContent =
@@ -642,6 +726,13 @@ function nextRound() {
 
     shots = 0;
 
+    hits = 0;
+
+
+    roundShots[currentRound - 1] = 0;
+
+    roundHits[currentRound - 1] = 0;
+
 
     timerDisplay.textContent =
         timeLeft;
@@ -651,6 +742,8 @@ function nextRound() {
 
     shotsDisplay.textContent =
         "発射数：" + shots;
+
+    updateHitRate();
 
 
     roundDisplay.textContent =
@@ -666,6 +759,9 @@ function nextRound() {
 
     startButton.style.display =
         "inline-block";
+
+
+    updateRoundScores();
 
 
     if (window.sendToFirebase) {
@@ -694,11 +790,19 @@ function nextCustomer() {
 
     shots = 0;
 
+    hits = 0;
+
 
     gameRunning = false;
 
 
     roundScores =
+        [0, 0, 0];
+
+    roundShots =
+        [0, 0, 0];
+
+    roundHits =
         [0, 0, 0];
 
 
@@ -718,6 +822,8 @@ function nextCustomer() {
 
     shotsDisplay.textContent =
         "発射数：0";
+
+    updateHitRate();
 
 
     roundDisplay.textContent =
@@ -742,34 +848,92 @@ function nextCustomer() {
 
 
 /* =========================
-   各回の得点表示
+   各回の得点・HIT率表示
 ========================= */
 
 function updateRoundScores() {
 
-    const total =
+    const totalScore =
         roundScores[0] +
         roundScores[1] +
         roundScores[2];
+
+
+    const totalShots =
+        roundShots[0] +
+        roundShots[1] +
+        roundShots[2];
+
+
+    const totalHits =
+        roundHits[0] +
+        roundHits[1] +
+        roundHits[2];
+
+
+    const totalHitRate =
+        totalShots === 0
+            ? 0
+            : Math.round(totalHits / totalShots * 100);
+
+
+    const round1Rate =
+        roundShots[0] === 0
+            ? 0
+            : Math.round(
+                roundHits[0] /
+                roundShots[0] *
+                100
+            );
+
+
+    const round2Rate =
+        roundShots[1] === 0
+            ? 0
+            : Math.round(
+                roundHits[1] /
+                roundShots[1] *
+                100
+            );
+
+
+    const round3Rate =
+        roundShots[2] === 0
+            ? 0
+            : Math.round(
+                roundHits[2] /
+                roundShots[2] *
+                100
+            );
 
 
     roundScoresDisplay.innerHTML =
 
         "1回目：" +
         roundScores[0] +
-        "点<br>" +
+        "点 / HIT率：" +
+        round1Rate +
+        "%<br>" +
 
         "2回目：" +
         roundScores[1] +
-        "点<br>" +
+        "点 / HIT率：" +
+        round2Rate +
+        "%<br>" +
 
         "3回目：" +
         roundScores[2] +
-        "点<br><br>" +
+        "点 / HIT率：" +
+        round3Rate +
+        "%<br><br>" +
 
         "合計：" +
-        total +
-        "点";
+        totalScore +
+        "点<br>" +
+
+        "3回合計HIT率：" +
+        totalHitRate +
+        "%";
 
 }
 
@@ -779,6 +943,8 @@ function updateRoundScores() {
 ========================= */
 
 updateRoundScores();
+
+updateHitRate();
 
 </script>
 
@@ -872,6 +1038,28 @@ window.sendToFirebase = function() {
         roundScores[2];
 
 
+    const totalShots =
+        roundShots[0] +
+        roundShots[1] +
+        roundShots[2];
+
+
+    const totalHits =
+        roundHits[0] +
+        roundHits[1] +
+        roundHits[2];
+
+
+    const totalHitRate =
+        totalShots === 0
+            ? 0
+            : Math.round(
+                totalHits /
+                totalShots *
+                100
+            );
+
+
     const data = {
 
         station:
@@ -889,6 +1077,27 @@ window.sendToFirebase = function() {
         shots:
             shots,
 
+        hits:
+            hits,
+
+        hitRate:
+            shots === 0
+                ? 0
+                : Math.round(
+                    hits /
+                    shots *
+                    100
+                ),
+
+        totalShots:
+            totalShots,
+
+        totalHits:
+            totalHits,
+
+        totalHitRate:
+            totalHitRate,
+
         totalScore:
             totalScore,
 
@@ -900,6 +1109,12 @@ window.sendToFirebase = function() {
 
         roundScores:
             roundScores,
+
+        roundShots:
+            roundShots,
+
+        roundHits:
+            roundHits,
 
         updatedAt:
             Date.now()
