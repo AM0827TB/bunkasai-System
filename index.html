@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SHOOTING GALAXY</title>
+<title>GALAXY SHOTTER</title>
 
 <style>
 
@@ -151,7 +151,7 @@ button:active {
 
 <body>
 
-<h1>SHOOTING GALAXY</h1>
+<h1>GALAXY SHOTTER</h1>
 
 
 <!-- 担当台 -->
@@ -200,6 +200,9 @@ button:active {
         placeholder="Challenger番号"
         inputmode="numeric"
         pattern="[0-9]*"
+        maxlength="3"
+        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+        onblur="this.value = this.value.padStart(3, '0')"
     >
 
 </div>
@@ -827,7 +830,7 @@ from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 const firebaseConfig = {
 
     apiKey:
-        "AIzaSyBrv8InAGFNSMj1CSrem9Q8CxeQkzrfCg",
+        "あなたのFirebase APIキー",
 
     authDomain:
         "shooting-galaxy.firebaseapp.com",
