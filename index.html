@@ -122,6 +122,13 @@ button:active {
     color: #000000;
 }
 
+.scoreButtons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 .scoreButton {
     min-width: 130px;
 }
@@ -205,9 +212,9 @@ button:active {
         placeholder="Challenger番号"
         inputmode="numeric"
         pattern="[0-9]*"
-        maxlength="3"
+        maxlength="4"
         oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-        onblur="this.value = this.value.padStart(3, '0')"
+        onblur="this.value = this.value.padStart(4, '0')"
     >
 
 </div>
@@ -262,7 +269,7 @@ button:active {
 
 <!-- 得点ボタン -->
 
-<div style="display: flex; gap: 10px; justify-content: center;">
+<div class="scoreButtons">
 
     <button
         class="scoreButton"
@@ -1025,7 +1032,7 @@ window.sendToFirebase = function() {
 
     /*
        Challenger番号は文字列として扱う。
-       001 → 001 のまま保存する。
+       0001 → 0001 のまま保存する。
     */
 
     const participant =
