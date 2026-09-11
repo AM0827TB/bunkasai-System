@@ -166,7 +166,9 @@ button:active {
 <h1>GALAXY SHOTTER</h1>
 
 
-<!-- 担当台 -->
+<!-- =========================
+     担当台
+========================= -->
 
 <div id="stationArea">
 
@@ -202,7 +204,9 @@ button:active {
 </div>
 
 
-<!-- Challenger番号 -->
+<!-- =========================
+     Challenger番号
+========================= -->
 
 <div id="participantArea">
 
@@ -214,7 +218,6 @@ button:active {
         pattern="[0-9]*"
         maxlength="4"
         oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-        onblur="this.value = this.value.padStart(4, '0')"
     >
 
 </div>
@@ -225,49 +228,63 @@ button:active {
 </div>
 
 
-<!-- 状態 -->
+<!-- =========================
+     状態
+========================= -->
 
 <div id="status">
     集計開始
 </div>
 
 
-<!-- 回数 -->
+<!-- =========================
+     回数
+========================= -->
 
 <div id="round">
     1回目
 </div>
 
 
-<!-- タイマー -->
+<!-- =========================
+     タイマー
+========================= -->
 
 <div id="timer">
     50
 </div>
 
 
-<!-- 得点 -->
+<!-- =========================
+     得点
+========================= -->
 
 <div id="score">
     0
 </div>
 
 
-<!-- 発射数 -->
+<!-- =========================
+     発射数
+========================= -->
 
 <div id="shots">
     発射数：0
 </div>
 
 
-<!-- HIT率 -->
+<!-- =========================
+     HIT率
+========================= -->
 
 <div id="hitRateDisplay">
     HIT率：0%
 </div>
 
 
-<!-- 得点ボタン -->
+<!-- =========================
+     得点ボタン
+========================= -->
 
 <div class="scoreButtons">
 
@@ -292,7 +309,9 @@ button:active {
 </div>
 
 
-<!-- MISS -->
+<!-- =========================
+     MISS
+========================= -->
 
 <div>
 
@@ -305,7 +324,9 @@ button:active {
 </div>
 
 
-<!-- 集計開始 -->
+<!-- =========================
+     集計開始
+========================= -->
 
 <div>
 
@@ -318,7 +339,9 @@ button:active {
 </div>
 
 
-<!-- 次のラウンド -->
+<!-- =========================
+     次のラウンド
+========================= -->
 
 <div>
 
@@ -332,7 +355,9 @@ button:active {
 </div>
 
 
-<!-- 次のChallenger -->
+<!-- =========================
+     次のChallenger
+========================= -->
 
 <div>
 
@@ -345,14 +370,18 @@ button:active {
 </div>
 
 
-<!-- 各回の結果 -->
+<!-- =========================
+     各回の結果
+========================= -->
 
 <div id="roundScores">
 
     1回目：0点 / HIT率：0%<br>
     2回目：0点 / HIT率：0%<br>
     3回目：0点 / HIT率：0%<br><br>
+
     合計：0点<br>
+
     3回合計HIT率：0%
 
 </div>
@@ -440,10 +469,68 @@ function updateHitRate() {
     const rate =
         shots === 0
             ? 0
-            : Math.round(hits / shots * 100);
+            : Math.round(
+                hits / shots * 100
+            );
 
     hitRateDisplay.textContent =
         "HIT率：" + rate + "%";
+
+}
+
+
+/* =========================
+   Challenger番号チェック
+========================= */
+
+function normalizeParticipantNumber() {
+
+    let value =
+        participantNumber.value.trim();
+
+
+    if (value === "") {
+
+        alert(
+            "Challenger番号を入力してください"
+        );
+
+        return false;
+    }
+
+
+    if (!/^[0-9]+$/.test(value)) {
+
+        alert(
+            "Challenger番号は数字で入力してください"
+        );
+
+        return false;
+    }
+
+
+    const number =
+        Number(value);
+
+
+    if (
+        number < 1 ||
+        number > 9999
+    ) {
+
+        alert(
+            "Challenger番号は1〜9999で入力してください"
+        );
+
+        return false;
+    }
+
+
+    participantNumber.value =
+        value.padStart(4, "0");
+
+
+    return true;
 
 }
 
@@ -454,7 +541,9 @@ function updateHitRate() {
 
 function setStation() {
 
-    station = stationSelect.value;
+    station =
+        stationSelect.value;
+
 
     if (station === "") {
 
@@ -463,6 +552,7 @@ function setStation() {
 
         return;
     }
+
 
     stationDisplay.textContent =
         "担当台：" + station;
@@ -483,16 +573,17 @@ function startGame() {
 
     if (station === "") {
 
-        alert("担当台を選択してください");
+        alert(
+            "担当台を選択してください"
+        );
 
         return;
     }
 
 
-    if (participantNumber.value === "") {
+    /* Challenger番号を確認 */
 
-        alert("Challenger番号を入力してください");
-
+    if (!normalizeParticipantNumber()) {
         return;
     }
 
@@ -514,9 +605,11 @@ function startGame() {
     hits = 0;
 
 
-    roundShots[currentRound - 1] = 0;
+    roundShots[currentRound - 1] =
+        0;
 
-    roundHits[currentRound - 1] = 0;
+    roundHits[currentRound - 1] =
+        0;
 
 
     scoreDisplay.textContent =
@@ -526,6 +619,7 @@ function startGame() {
         "発射数：" + shots;
 
     updateHitRate();
+
 
     timerDisplay.textContent =
         timeLeft;
@@ -542,6 +636,7 @@ function startGame() {
     startButton.style.display =
         "none";
 
+
     nextRoundButton.style.display =
         "none";
 
@@ -550,25 +645,28 @@ function startGame() {
 
 
     if (window.sendToFirebase) {
+
         window.sendToFirebase();
+
     }
 
 
-    timer = setInterval(function() {
+    timer =
+        setInterval(function() {
 
-        timeLeft--;
+            timeLeft--;
 
-        timerDisplay.textContent =
-            timeLeft;
+            timerDisplay.textContent =
+                timeLeft;
 
 
-        if (timeLeft <= 0) {
+            if (timeLeft <= 0) {
 
-            endGame();
+                endGame();
 
-        }
+            }
 
-    }, 1000);
+        }, 1000);
 
 }
 
@@ -601,6 +699,7 @@ function addScore(points) {
     scoreDisplay.textContent =
         score;
 
+
     shotsDisplay.textContent =
         "発射数：" + shots;
 
@@ -611,7 +710,9 @@ function addScore(points) {
 
 
     if (window.sendToFirebase) {
+
         window.sendToFirebase();
+
     }
 
 }
@@ -648,7 +749,9 @@ function miss() {
 
 
     if (window.sendToFirebase) {
+
         window.sendToFirebase();
+
     }
 
 }
@@ -670,8 +773,10 @@ function endGame() {
     roundScores[currentRound - 1] =
         score;
 
+
     roundShots[currentRound - 1] =
         shots;
+
 
     roundHits[currentRound - 1] =
         hits;
@@ -698,7 +803,9 @@ function endGame() {
 
 
     if (window.sendToFirebase) {
+
         window.sendToFirebase();
+
     }
 
 }
@@ -736,19 +843,24 @@ function nextRound() {
     hits = 0;
 
 
-    roundShots[currentRound - 1] = 0;
+    roundShots[currentRound - 1] =
+        0;
 
-    roundHits[currentRound - 1] = 0;
+    roundHits[currentRound - 1] =
+        0;
 
 
     timerDisplay.textContent =
         timeLeft;
 
+
     scoreDisplay.textContent =
         score;
 
+
     shotsDisplay.textContent =
         "発射数：" + shots;
+
 
     updateHitRate();
 
@@ -764,6 +876,7 @@ function nextRound() {
     nextRoundButton.style.display =
         "none";
 
+
     startButton.style.display =
         "inline-block";
 
@@ -772,7 +885,9 @@ function nextRound() {
 
 
     if (window.sendToFirebase) {
+
         window.sendToFirebase();
+
     }
 
 }
@@ -824,11 +939,14 @@ function nextCustomer() {
     timerDisplay.textContent =
         timeLeft;
 
+
     scoreDisplay.textContent =
         score;
 
+
     shotsDisplay.textContent =
         "発射数：0";
+
 
     updateHitRate();
 
@@ -881,7 +999,11 @@ function updateRoundScores() {
     const totalHitRate =
         totalShots === 0
             ? 0
-            : Math.round(totalHits / totalShots * 100);
+            : Math.round(
+                totalHits /
+                totalShots *
+                100
+            );
 
 
     const round1Rate =
@@ -1029,11 +1151,6 @@ window.sendToFirebase = function() {
         return;
     }
 
-
-    /*
-       Challenger番号は文字列として扱う。
-       0001 → 0001 のまま保存する。
-    */
 
     const participant =
         participantNumber.value.trim();
