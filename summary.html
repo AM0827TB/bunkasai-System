@@ -46,6 +46,12 @@ h2 {
 
 }
 
+h3 {
+
+    margin-top: 30px;
+
+}
+
 .status {
 
     text-align: center;
@@ -135,6 +141,12 @@ th {
 
 }
 
+.hitRate {
+
+    font-weight: bold;
+
+}
+
 .noData {
 
     text-align: center;
@@ -142,6 +154,50 @@ th {
     font-size: 22px;
 
     margin: 40px;
+
+}
+
+
+/* スマホ・iPadで見やすくする */
+
+@media (max-width: 800px) {
+
+    body {
+
+        padding: 10px;
+
+    }
+
+    h1 {
+
+        font-size: 30px;
+
+    }
+
+    table {
+
+        font-size: 14px;
+
+    }
+
+    th,
+    td {
+
+        padding: 7px;
+
+    }
+
+    .total {
+
+        font-size: 18px;
+
+    }
+
+    button {
+
+        font-size: 16px;
+
+    }
 
 }
 
@@ -164,21 +220,25 @@ Firebase接続中...
 </div>
 
 
-<!-- 全データ削除 -->
+<!-- =========================
+     全データ削除
+========================= -->
 
 <div class="deleteAllArea">
 
 <button
     onclick="deleteAllData()">
 
-全データ削除
+🗑 全データ削除
 
 </button>
 
 </div>
 
 
-<!-- 総合ランキング -->
+<!-- =========================
+     総合ランキング
+========================= -->
 
 <h2>総合ランキング</h2>
 
@@ -188,7 +248,9 @@ Firebase接続中...
 </div>
 
 
-<!-- Challenger詳細 -->
+<!-- =========================
+     Challenger詳細
+========================= -->
 
 <h2>Challenger別 詳細</h2>
 
@@ -198,12 +260,18 @@ Firebase接続中...
 </div>
 
 
-<!-- Firebase -->
+<!-- =========================
+     Firebase
+========================= -->
 
 <script type="module">
 
 
-import { initializeApp }
+import {
+
+    initializeApp
+
+}
 
 from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
@@ -227,7 +295,6 @@ from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 /* =========================
    Firebase設定
 ========================= */
-
 
 const firebaseConfig = {
 
@@ -260,7 +327,6 @@ const firebaseConfig = {
    Firebase開始
 ========================= */
 
-
 const app =
     initializeApp(firebaseConfig);
 
@@ -278,13 +344,11 @@ const scoresRef =
    データ読み込み
 ========================= */
 
-
 onValue(
 
     scoresRef,
 
     function(snapshot) {
-
 
         const data =
             snapshot.val();
@@ -300,11 +364,9 @@ onValue(
 
         createDetails(data);
 
-
     },
 
     function(error) {
-
 
         console.error(error);
 
@@ -312,7 +374,6 @@ onValue(
         document.getElementById("status")
             .textContent =
             "Firebase読み込みエラー";
-
 
     }
 
@@ -324,9 +385,7 @@ onValue(
    総合ランキング
 ========================= */
 
-
 function createRanking(data) {
-
 
     const area =
         document.getElementById("ranking");
@@ -337,10 +396,8 @@ function createRanking(data) {
 
     if (!data) {
 
-
         area.innerHTML =
             '<div class="noData">まだ得点データがありません。</div>';
-
 
         return;
 
@@ -354,7 +411,6 @@ function createRanking(data) {
 
         function(participant) {
 
-
             const participantData =
                 data[participant];
 
@@ -366,40 +422,119 @@ function createRanking(data) {
             let station3 = 0;
 
 
+            let shots1 = 0;
+
+            let shots2 = 0;
+
+            let shots3 = 0;
+
+
+            let hits1 = 0;
+
+            let hits2 = 0;
+
+            let hits3 = 0;
+
+
+
+            /* 台1 */
+
             if (participantData["台1"]) {
 
+                const d =
+                    participantData["台1"];
+
+
                 station1 =
-                    Number(
-                        participantData["台1"].totalScore
-                    ) || 0;
+                    Number(d.totalScore) || 0;
+
+
+                shots1 =
+                    Number(d.totalShots) || 0;
+
+
+                hits1 =
+                    Number(d.totalHits) || 0;
 
             }
 
+
+
+            /* 台2 */
 
             if (participantData["台2"]) {
 
+                const d =
+                    participantData["台2"];
+
+
                 station2 =
-                    Number(
-                        participantData["台2"].totalScore
-                    ) || 0;
+                    Number(d.totalScore) || 0;
+
+
+                shots2 =
+                    Number(d.totalShots) || 0;
+
+
+                hits2 =
+                    Number(d.totalHits) || 0;
 
             }
 
+
+
+            /* 台3 */
 
             if (participantData["台3"]) {
 
+                const d =
+                    participantData["台3"];
+
+
                 station3 =
-                    Number(
-                        participantData["台3"].totalScore
-                    ) || 0;
+                    Number(d.totalScore) || 0;
+
+
+                shots3 =
+                    Number(d.totalShots) || 0;
+
+
+                hits3 =
+                    Number(d.totalHits) || 0;
 
             }
 
+
+
+            /* 3台合計 */
 
             const total =
                 station1 +
                 station2 +
                 station3;
+
+
+            const totalShots =
+                shots1 +
+                shots2 +
+                shots3;
+
+
+            const totalHits =
+                hits1 +
+                hits2 +
+                hits3;
+
+
+            const totalHitRate =
+                totalShots === 0
+                    ? 0
+                    : Math.round(
+                        totalHits /
+                        totalShots *
+                        100
+                      );
+
 
 
             ranking.push({
@@ -417,15 +552,20 @@ function createRanking(data) {
                     station3,
 
                 total:
-                    total
+                    total,
+
+                totalHitRate:
+                    totalHitRate
 
             });
-
 
         }
 
     );
 
+
+
+    /* 得点の高い順 */
 
     ranking.sort(
 
@@ -436,6 +576,7 @@ function createRanking(data) {
         }
 
     );
+
 
 
     let html = `
@@ -456,6 +597,8 @@ function createRanking(data) {
 
 <th>総合計</th>
 
+<th>総合HIT率</th>
+
 <th>削除</th>
 
 </tr>
@@ -463,10 +606,10 @@ function createRanking(data) {
 `;
 
 
+
     ranking.forEach(
 
         function(item, index) {
-
 
             html += `
 
@@ -481,19 +624,23 @@ ${item.participant}
 </td>
 
 <td>
-${item.station1}
+${item.station1}点
 </td>
 
 <td>
-${item.station2}
+${item.station2}点
 </td>
 
 <td>
-${item.station3}
+${item.station3}点
 </td>
 
 <td class="total">
-${item.total}
+${item.total}点
+</td>
+
+<td class="hitRate">
+${item.totalHitRate}%
 </td>
 
 <td>
@@ -512,10 +659,10 @@ ${item.total}
 
 `;
 
-
         }
 
     );
+
 
 
     html += `
@@ -536,9 +683,7 @@ ${item.total}
    Challenger詳細
 ========================= */
 
-
 function createDetails(data) {
-
 
     const area =
         document.getElementById("details");
@@ -554,10 +699,10 @@ function createDetails(data) {
     }
 
 
+
     Object.keys(data).forEach(
 
         function(participant) {
-
 
             const participantData =
                 data[participant];
@@ -566,9 +711,7 @@ function createDetails(data) {
             let html = `
 
 <h3>
-
 Challenger ${participant}
-
 </h3>
 
 <table>
@@ -585,6 +728,8 @@ Challenger ${participant}
 
 <th>合計</th>
 
+<th>3回合計HIT率</th>
+
 </tr>
 
 `;
@@ -592,11 +737,15 @@ Challenger ${participant}
 
             let grandTotal = 0;
 
+            let grandShots = 0;
+
+            let grandHits = 0;
+
+
 
             ["台1", "台2", "台3"].forEach(
 
                 function(station) {
-
 
                     const stationData =
                         participantData[station];
@@ -608,6 +757,11 @@ Challenger ${participant}
 
                     }
 
+
+
+                    /* =========================
+                       得点
+                    ========================= */
 
                     const rounds =
                         stationData.roundScores ||
@@ -626,14 +780,130 @@ Challenger ${participant}
                         Number(rounds[2]) || 0;
 
 
+
                     const total =
                         Number(
                             stationData.totalScore
                         ) || 0;
 
 
+
+                    /* =========================
+                       ショット数
+                    ========================= */
+
+                    const roundShots =
+                        stationData.roundShots ||
+                        [0, 0, 0];
+
+
+                    const roundHits =
+                        stationData.roundHits ||
+                        [0, 0, 0];
+
+
+
+                    const shots1 =
+                        Number(roundShots[0]) || 0;
+
+
+                    const shots2 =
+                        Number(roundShots[1]) || 0;
+
+
+                    const shots3 =
+                        Number(roundShots[2]) || 0;
+
+
+
+                    const hits1 =
+                        Number(roundHits[0]) || 0;
+
+
+                    const hits2 =
+                        Number(roundHits[1]) || 0;
+
+
+                    const hits3 =
+                        Number(roundHits[2]) || 0;
+
+
+
+                    /* =========================
+                       各回HIT率
+                    ========================= */
+
+                    const rate1 =
+                        shots1 === 0
+                            ? 0
+                            : Math.round(
+                                hits1 /
+                                shots1 *
+                                100
+                              );
+
+
+                    const rate2 =
+                        shots2 === 0
+                            ? 0
+                            : Math.round(
+                                hits2 /
+                                shots2 *
+                                100
+                              );
+
+
+                    const rate3 =
+                        shots3 === 0
+                            ? 0
+                            : Math.round(
+                                hits3 /
+                                shots3 *
+                                100
+                              );
+
+
+
+                    /* =========================
+                       3回合計
+                    ========================= */
+
+                    const totalShots =
+                        shots1 +
+                        shots2 +
+                        shots3;
+
+
+                    const totalHits =
+                        hits1 +
+                        hits2 +
+                        hits3;
+
+
+                    const totalHitRate =
+                        totalShots === 0
+                            ? 0
+                            : Math.round(
+                                totalHits /
+                                totalShots *
+                                100
+                              );
+
+
+
+                    /* Challenger全体 */
+
                     grandTotal += total;
 
+                    grandShots += totalShots;
+
+                    grandHits += totalHits;
+
+
+
+                    /* =========================
+                       表に追加
+                    ========================= */
 
                     html += `
 
@@ -644,19 +914,69 @@ ${station}
 </td>
 
 <td>
-${round1}
+
+${round1}点
+
+<br>
+
+<span class="hitRate">
+HIT率：${rate1}%
+</span>
+
+<br>
+
+<small>
+${hits1} HIT / ${shots1} SHOT
+</small>
+
 </td>
 
 <td>
-${round2}
+
+${round2}点
+
+<br>
+
+<span class="hitRate">
+HIT率：${rate2}%
+</span>
+
+<br>
+
+<small>
+${hits2} HIT / ${shots2} SHOT
+</small>
+
 </td>
 
 <td>
-${round3}
+
+${round3}点
+
+<br>
+
+<span class="hitRate">
+HIT率：${rate3}%
+</span>
+
+<br>
+
+<small>
+${hits3} HIT / ${shots3} SHOT
+</small>
+
 </td>
 
 <td class="total">
-${total}
+
+${total}点
+
+</td>
+
+<td class="total">
+
+${totalHitRate}%
+
 </td>
 
 </tr>
@@ -666,6 +986,22 @@ ${total}
                 }
 
             );
+
+
+
+            /* =========================
+               3台合計HIT率
+            ========================= */
+
+            const grandHitRate =
+                grandShots === 0
+                    ? 0
+                    : Math.round(
+                        grandHits /
+                        grandShots *
+                        100
+                      );
+
 
 
             html += `
@@ -681,7 +1017,13 @@ ${total}
 
 <td class="total">
 
-${grandTotal}
+${grandTotal}点
+
+</td>
+
+<td class="total">
+
+${grandHitRate}%
 
 </td>
 
@@ -690,6 +1032,7 @@ ${grandTotal}
 </table>
 
 `;
+
 
 
             area.innerHTML +=
@@ -707,10 +1050,8 @@ ${grandTotal}
    Challenger削除
 ========================= */
 
-
 window.deleteParticipant =
     function(participant) {
-
 
         const answer =
             confirm(
@@ -743,9 +1084,11 @@ window.deleteParticipant =
             function() {
 
                 alert(
+
                     "Challenger " +
                     participant +
                     " のデータを削除しました。"
+
                 );
 
             }
@@ -757,6 +1100,7 @@ window.deleteParticipant =
             function(error) {
 
                 console.error(error);
+
 
                 alert(
                     "削除に失敗しました。"
@@ -774,10 +1118,8 @@ window.deleteParticipant =
    全データ削除
 ========================= */
 
-
 window.deleteAllData =
     function() {
-
 
         const answer1 =
             confirm(
@@ -831,6 +1173,7 @@ window.deleteAllData =
             function(error) {
 
                 console.error(error);
+
 
                 alert(
                     "削除に失敗しました。"
