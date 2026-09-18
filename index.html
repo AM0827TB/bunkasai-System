@@ -315,11 +315,113 @@ button:active {
 
 <div>
 
+        <button
+            class="miss"
+            onclick="miss()">
+
+            MISS
+
+        </button>
+
+
+    </div>
+
+
+    <!-- ラウンド終了 -->
+
     <button
-        class="miss"
-        onclick="miss()">
-        MISS
+        class="end"
+        onclick="endGame()">
+
+        ラウンド終了
+
     </button>
+
+
+    <!-- 3ラウンド結果 -->
+
+    <div class="summary">
+
+        <h2>🏆 3ラウンド結果</h2>
+
+
+        <div class="round-result">
+
+            1回目：
+
+            <span id="round1Score">0</span>点
+
+            /
+
+            <span id="round1HitRate">0%</span>
+
+        </div>
+
+
+        <div class="round-result">
+
+            2回目：
+
+            <span id="round2Score">0</span>点
+
+            /
+
+            <span id="round2HitRate">0%</span>
+
+        </div>
+
+
+        <div class="round-result">
+
+            3回目：
+
+            <span id="round3Score">0</span>点
+
+            /
+
+            <span id="round3HitRate">0%</span>
+
+        </div>
+
+
+        <hr>
+
+
+        <div class="round-result">
+
+            合計：
+
+            <strong>
+
+                <span id="totalScore">0</span>点
+
+            </strong>
+
+        </div>
+
+
+        <div class="round-result">
+
+            3回合計HIT率：
+
+            <strong>
+
+                <span id="totalHitRate">0%</span>
+
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <div
+        class="status"
+        id="status">
+
+    </div>
+
 
 </div>
 
