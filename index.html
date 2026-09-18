@@ -91,6 +91,11 @@
         color: #000;
     }
 
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
     .miss {
         margin-bottom: 20px;
     }
@@ -132,19 +137,6 @@
         font-size: 20px;
     }
 
-    .station-area {
-        margin-bottom: 20px;
-    }
-
-    .station-area select {
-        padding: 10px;
-        font-size: 20px;
-        background: #000;
-        color: #fff;
-        border: 2px solid #fff;
-        border-radius: 8px;
-    }
-
     @media (max-width: 600px) {
         h1 {
             font-size: 32px;
@@ -179,15 +171,6 @@
             maxlength="4"
             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
         >
-    </div>
-
-    <!-- 台 -->
-    <div class="station-area">
-        <select id="station">
-            <option value="台1">台1</option>
-            <option value="台2">台2</option>
-            <option value="台3">台3</option>
-        </select>
     </div>
 
     <!-- 現在のラウンド -->
@@ -247,7 +230,7 @@
     <!-- 3ラウンド結果 -->
     <div class="result">
 
-        <h2>🏆 3ラウンド結果</h2>
+        <h2>3ラウンド結果</h2>
 
         <div class="round-result">
             1回目：
@@ -307,6 +290,14 @@ import {
 
 
 // =====================================
+// このiPadの台番号
+// =====================================
+
+// 台1のiPadなら「台1」
+const STATION = "台1";
+
+
+// =====================================
 // Firebase設定
 // =====================================
 
@@ -346,10 +337,15 @@ let roundHits = [0, 0, 0];
 function normalizeParticipantNumber() {
 
     const input =
-        document.getElementById("participantNumber").value.trim();
+        document
+            .getElementById("participantNumber")
+            .value
+            .trim();
 
     if (input === "") {
+
         alert("Challenger番号を入力してください。");
+
         return null;
     }
 
@@ -360,7 +356,11 @@ function normalizeParticipantNumber() {
         number < 1 ||
         number > 9999
     ) {
-        alert("Challenger番号は1〜9999で入力してください。");
+
+        alert(
+            "Challenger番号は1〜9999で入力してください。"
+        );
+
         return null;
     }
 
@@ -404,7 +404,7 @@ function updateDisplay() {
         calculateHitRate(hits, shots) + "%";
 
 
-    // 1ラウンド目
+    // 1回目
     document.getElementById("round1Score").textContent =
         roundScores[0];
 
@@ -415,7 +415,7 @@ function updateDisplay() {
         );
 
 
-    // 2ラウンド目
+    // 2回目
     document.getElementById("round2Score").textContent =
         roundScores[1];
 
@@ -426,7 +426,7 @@ function updateDisplay() {
         );
 
 
-    // 3ラウンド目
+    // 3回目
     document.getElementById("round3Score").textContent =
         roundScores[2];
 
@@ -467,7 +467,7 @@ function updateDisplay() {
 
 
 // =====================================
-// 10点・50点・100点
+// 得点
 // =====================================
 
 window.addScore = function(points) {
@@ -515,18 +515,11 @@ window.endRound = async function() {
         return;
     }
 
-    const station =
-        document.getElementById("station").value;
+
+    await saveToFirebase(participant);
 
 
-    // Firebaseへ保存
-    await saveToFirebase(
-        participant,
-        station
-    );
-
-
-    // 3ラウンド終了
+    // 3ラウンド目終了
     if (currentRound === 3) {
 
         document.getElementById("status").textContent =
@@ -539,7 +532,7 @@ window.endRound = async function() {
     }
 
 
-    // 次のラウンドへ
+    // 次のラウンド
     currentRound++;
 
     score = 0;
@@ -557,10 +550,7 @@ window.endRound = async function() {
 // Firebase保存
 // =====================================
 
-async function saveToFirebase(
-    participant,
-    station
-) {
+async function saveToFirebase(participant) {
 
     const totalScore =
         roundScores[0] +
@@ -586,7 +576,7 @@ async function saveToFirebase(
 
     const data = {
 
-        station: station,
+        station: STATION,
 
         participant: participant,
 
@@ -629,7 +619,7 @@ async function saveToFirebase(
                 "scores/" +
                 participant +
                 "/" +
-                station
+                STATION
             ),
             data
         );
@@ -670,14 +660,14 @@ window.nextChallenger = function() {
         false;
 
     document.getElementById("status").textContent =
-        "次のChallenger番号を入力してください";
+        "Challenger番号を入力してください";
 
     updateDisplay();
 };
 
 
 // =====================================
-// 最初の画面
+// 初期表示
 // =====================================
 
 updateDisplay();
