@@ -1,174 +1,176 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>GALAXY SHOTTER</title>
+<title>GALAXY SHOTTER</title>
 
-    <style>
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    body {
+        margin: 0;
+        background: #000;
+        color: #fff;
+        font-family: Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+        text-align: center;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #050816;
-            color: white;
-            text-align: center;
-        }
+    .container {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+    }
 
-        .container {
-            max-width: 700px;
-            margin: auto;
-            padding: 20px;
-        }
+    h1 {
+        font-size: 42px;
+        margin: 10px 0 25px;
+    }
 
+    .participant-area {
+        margin-bottom: 25px;
+    }
+
+    .participant-area input {
+        width: 260px;
+        padding: 14px;
+        font-size: 22px;
+        text-align: center;
+        border: 2px solid #fff;
+        border-radius: 10px;
+        background: #000;
+        color: #fff;
+    }
+
+    .round-title {
+        font-size: 28px;
+        margin: 20px 0;
+    }
+
+    .score {
+        font-size: 60px;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+
+    .info {
+        font-size: 24px;
+        margin: 12px 0;
+    }
+
+    .hit-rate {
+        font-size: 28px;
+        margin: 15px 0 25px;
+    }
+
+    .score-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    button {
+        color: #fff;
+        background: #000;
+        border: 2px solid #fff;
+        border-radius: 12px;
+        padding: 18px 30px;
+        font-size: 25px;
+        cursor: pointer;
+        min-width: 150px;
+    }
+
+    button:active {
+        background: #fff;
+        color: #000;
+    }
+
+    .miss {
+        margin-bottom: 20px;
+    }
+
+    .end-button {
+        margin-top: 10px;
+        min-width: 250px;
+    }
+
+    .next-button {
+        margin-top: 20px;
+        min-width: 280px;
+    }
+
+    .result {
+        margin-top: 35px;
+        padding-top: 25px;
+        border-top: 2px solid #fff;
+    }
+
+    .result h2 {
+        font-size: 30px;
+        margin-bottom: 25px;
+    }
+
+    .round-result {
+        font-size: 22px;
+        margin: 12px 0;
+    }
+
+    .total {
+        margin-top: 30px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .status {
+        margin-top: 25px;
+        font-size: 20px;
+    }
+
+    .station-area {
+        margin-bottom: 20px;
+    }
+
+    .station-area select {
+        padding: 10px;
+        font-size: 20px;
+        background: #000;
+        color: #fff;
+        border: 2px solid #fff;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
         h1 {
-            font-size: 42px;
-            margin: 10px 0 25px;
-        }
-
-        .input-area {
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            font-size: 22px;
-            text-align: center;
-            border-radius: 10px;
-            border: none;
-        }
-
-        .station-area {
-            margin: 15px 0;
-        }
-
-        select {
-            padding: 12px 20px;
-            font-size: 20px;
-            border-radius: 10px;
-        }
-
-        .round {
-            font-size: 30px;
-            margin: 15px 0;
+            font-size: 32px;
         }
 
         .score {
-            font-size: 60px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .stats {
-            font-size: 22px;
-            margin: 10px 0 20px;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 20px;
+            font-size: 50px;
         }
 
         button {
-            padding: 20px 10px;
-            font-size: 25px;
-            font-weight: bold;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
+            min-width: 130px;
+            padding: 15px 20px;
+            font-size: 21px;
         }
-
-        .score10 {
-            background: #2196f3;
-            color: white;
-        }
-
-        .score50 {
-            background: #ff9800;
-            color: white;
-        }
-
-        .score100 {
-            background: #f44336;
-            color: white;
-        }
-
-        .miss {
-            background: #555;
-            color: white;
-        }
-
-        .end {
-            width: 100%;
-            margin-top: 20px;
-            background: #9c27b0;
-            color: white;
-        }
-
-        .summary {
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 15px;
-            background: #111a33;
-        }
-
-        .summary h2 {
-            margin-top: 0;
-        }
-
-        .round-result {
-            font-size: 20px;
-            margin: 8px 0;
-        }
-
-        .status {
-            margin-top: 15px;
-            font-size: 18px;
-            min-height: 25px;
-        }
-
-        @media (max-width: 500px) {
-
-            h1 {
-                font-size: 32px;
-            }
-
-            .score {
-                font-size: 50px;
-            }
-
-            button {
-                font-size: 21px;
-                padding: 18px 8px;
-            }
-
-        }
-
-    </style>
-
+    }
+</style>
 </head>
-
 
 <body>
 
 <div class="container">
 
-    <h1>🌌 GALAXY SHOTTER 🌌</h1>
-
+    <h1>GALAXY SHOTTER</h1>
 
     <!-- Challenger番号 -->
-
-    <div class="input-area">
-
+    <div class="participant-area">
         <input
             type="text"
             id="participantNumber"
@@ -177,836 +179,510 @@
             maxlength="4"
             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
         >
-
     </div>
 
-
-    <!-- 台番号 -->
-
+    <!-- 台 -->
     <div class="station-area">
-
         <select id="station">
-
             <option value="台1">台1</option>
-
             <option value="台2">台2</option>
-
             <option value="台3">台3</option>
-
         </select>
-
     </div>
 
-
-    <!-- ラウンド -->
-
-    <div
-        class="round"
-        id="roundDisplay">
-
-        ラウンド 1 / 3
-
+    <!-- 現在のラウンド -->
+    <div class="round-title" id="roundTitle">
+        1ラウンド目
     </div>
 
-
-    <!-- 現在スコア -->
-
-    <div
-        class="score"
-        id="score">
-
+    <!-- 現在の点数 -->
+    <div class="score" id="score">
         0
+    </div>
+
+    <div class="info">
+        発射数：<span id="shots">0</span>
+    </div>
+
+    <div class="info">
+        HIT数：<span id="hits">0</span>
+    </div>
+
+    <div class="hit-rate">
+        HIT率：<span id="hitRate">0%</span>
+    </div>
+
+    <!-- 得点ボタン -->
+    <div class="score-buttons">
+
+        <button onclick="addScore(10)">
+            10点
+        </button>
+
+        <button onclick="addScore(50)">
+            50点
+        </button>
+
+        <button onclick="addScore(100)">
+            100点
+        </button>
 
     </div>
 
-
-    <!-- SHOT・HIT・HIT率 -->
-
-    <div class="stats">
-
-        SHOT：
-        <span id="shots">0</span>
-
-       　
-
-        HIT：
-        <span id="hits">0</span>
-
-       　
-
-        HIT率：
-        <span id="hitRate">0%</span>
-
-    </div>
-
-
-    <!-- スコアボタン -->
-
-    <div class="buttons">
-
-
-        <button
-            class="score10"
-            onclick="addScore(10)">
-
-            +10
-
-        </button>
-
-
-        <button
-            class="score50"
-            onclick="addScore(50)">
-
-            +50
-
-        </button>
-
-
-        <button
-            class="score100"
-            onclick="addScore(100)">
-
-            +100
-
-        </button>
-
-
-        <button
-            class="miss"
-            onclick="miss()">
-
+    <!-- MISS -->
+    <div class="miss">
+        <button onclick="miss()">
             MISS
-
         </button>
-
-
     </div>
-
 
     <!-- ラウンド終了 -->
-
     <button
-        class="end"
-        onclick="endGame()">
-
+        class="end-button"
+        onclick="endRound()"
+        id="endButton">
         ラウンド終了
-
     </button>
 
-
     <!-- 3ラウンド結果 -->
-
-    <div class="summary">
+    <div class="result">
 
         <h2>🏆 3ラウンド結果</h2>
 
-
         <div class="round-result">
-
             1回目：
-
-            <span id="round1Score">0</span>点
-
-            /
-
-            <span id="round1HitRate">0%</span>
-
+            <span id="round1Score">0</span>点 /
+            <span id="round1Rate">0</span>%
         </div>
 
-
         <div class="round-result">
-
             2回目：
-
-            <span id="round2Score">0</span>点
-
-            /
-
-            <span id="round2HitRate">0%</span>
-
+            <span id="round2Score">0</span>点 /
+            <span id="round2Rate">0</span>%
         </div>
 
-
         <div class="round-result">
-
             3回目：
-
-            <span id="round3Score">0</span>点
-
-            /
-
-            <span id="round3HitRate">0%</span>
-
+            <span id="round3Score">0</span>点 /
+            <span id="round3Rate">0</span>%
         </div>
 
-
-        <hr>
-
-
-        <div class="round-result">
-
+        <div class="total">
             合計：
-
-            <strong>
-
-                <span id="totalScore">0</span>点
-
-            </strong>
-
+            <span id="totalScore">0</span>点
         </div>
 
-
-        <div class="round-result">
-
+        <div class="total">
             3回合計HIT率：
-
-            <strong>
-
-                <span id="totalHitRate">0%</span>
-
-            </strong>
-
+            <span id="totalHitRate">0</span>%
         </div>
 
-
     </div>
 
+    <!-- 次のChallenger -->
+    <button
+        class="next-button"
+        onclick="nextChallenger()">
+        次のChallenger
+    </button>
 
-    <div
-        class="status"
-        id="status">
-
+    <div class="status" id="status">
+        Challenger番号を入力してください
     </div>
-
 
 </div>
 
 
-
-<!-- Firebase -->
-
 <script type="module">
 
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    import {
-        initializeApp
+import {
+    getDatabase,
+    ref,
+    set
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+// =====================================
+// Firebase設定
+// =====================================
+
+const firebaseConfig = {
+    apiKey: "ここに今まで使っていたAPIキー",
+    authDomain: "shooting-galaxy.firebaseapp.com",
+    databaseURL: "https://shooting-galaxy-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "shooting-galaxy",
+    storageBucket: "shooting-galaxy.firebasestorage.app",
+    messagingSenderId: "294093816088",
+    appId: "1:294093816088:web:a18a7966391d60e2209e6d"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+
+// =====================================
+// ゲーム変数
+// =====================================
+
+let currentRound = 1;
+
+let score = 0;
+let shots = 0;
+let hits = 0;
+
+let roundScores = [0, 0, 0];
+let roundShots = [0, 0, 0];
+let roundHits = [0, 0, 0];
+
+
+// =====================================
+// Challenger番号
+// =====================================
+
+function normalizeParticipantNumber() {
+
+    const input =
+        document.getElementById("participantNumber").value.trim();
+
+    if (input === "") {
+        alert("Challenger番号を入力してください。");
+        return null;
     }
-    from
-        "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
+    const number = Number(input);
 
-    import {
-        getDatabase,
-        ref,
-        set
+    if (
+        !Number.isInteger(number) ||
+        number < 1 ||
+        number > 9999
+    ) {
+        alert("Challenger番号は1〜9999で入力してください。");
+        return null;
     }
-    from
-        "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    return String(number).padStart(4, "0");
+}
 
 
-    // ========================================
-    // Firebase設定
-    // ========================================
+// =====================================
+// HIT率計算
+// =====================================
 
-    const firebaseConfig = {
+function calculateHitRate(h, s) {
 
-        apiKey: "YOUR_FIREBASE_API_KEY",
+    if (s === 0) {
+        return 0;
+    }
 
-        authDomain:
-            "shooting-galaxy.firebaseapp.com",
-
-        databaseURL:
-            "https://shooting-galaxy-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-        projectId:
-            "shooting-galaxy",
-
-        storageBucket:
-            "shooting-galaxy.firebasestorage.app",
-
-        messagingSenderId:
-            "294093816088",
-
-        appId:
-            "1:294093816088:web:a18a7966391d60e2209e6d"
-
-    };
+    return Math.round((h / s) * 100);
+}
 
 
-    // Firebase開始
+// =====================================
+// 画面更新
+// =====================================
 
-    const app =
-        initializeApp(firebaseConfig);
+function updateDisplay() {
 
-    const database =
-        getDatabase(app);
+    document.getElementById("roundTitle").textContent =
+        currentRound + "ラウンド目";
 
+    document.getElementById("score").textContent =
+        score;
 
+    document.getElementById("shots").textContent =
+        shots;
 
-    // ========================================
-    // ゲームデータ
-    // ========================================
+    document.getElementById("hits").textContent =
+        hits;
 
-    let currentRound = 1;
-
-    let currentScore = 0;
-
-    let shots = 0;
-
-    let hits = 0;
-
-
-    // 各ラウンドのデータ
-
-    let roundScores = [
-        0,
-        0,
-        0
-    ];
-
-    let roundShots = [
-        0,
-        0,
-        0
-    ];
-
-    let roundHits = [
-        0,
-        0,
-        0
-    ];
+    document.getElementById("hitRate").textContent =
+        calculateHitRate(hits, shots) + "%";
 
 
+    // 1ラウンド目
+    document.getElementById("round1Score").textContent =
+        roundScores[0];
 
-    // ========================================
-    // 画面要素
-    // ========================================
-
-    const scoreElement =
-        document.getElementById("score");
-
-    const shotsElement =
-        document.getElementById("shots");
-
-    const hitsElement =
-        document.getElementById("hits");
-
-    const hitRateElement =
-        document.getElementById("hitRate");
-
-    const roundDisplay =
-        document.getElementById("roundDisplay");
-
-    const statusElement =
-        document.getElementById("status");
-
-
-
-    // ========================================
-    // HIT率計算
-    // ========================================
-
-    function calculateHitRate(hit, shot) {
-
-        if (shot === 0) {
-
-            return 0;
-
-        }
-
-        return Math.round(
-            hit / shot * 100
+    document.getElementById("round1Rate").textContent =
+        calculateHitRate(
+            roundHits[0],
+            roundShots[0]
         );
 
-    }
 
-
-
-    // ========================================
-    // 画面更新
-    // ========================================
-
-    function updateDisplay() {
-
-
-        scoreElement.textContent =
-            currentScore;
-
-
-        shotsElement.textContent =
-            shots;
-
-
-        hitsElement.textContent =
-            hits;
-
-
-        hitRateElement.textContent =
-            calculateHitRate(
-                hits,
-                shots
-            ) + "%";
-
-
-        roundDisplay.textContent =
-            "ラウンド " +
-            currentRound +
-            " / 3";
-
-
-
-        // 1回目
-
-        document.getElementById(
-            "round1Score"
-        ).textContent =
-            roundScores[0];
-
-
-        document.getElementById(
-            "round1HitRate"
-        ).textContent =
-            calculateHitRate(
-                roundHits[0],
-                roundShots[0]
-            ) + "%";
-
-
-
-        // 2回目
-
-        document.getElementById(
-            "round2Score"
-        ).textContent =
-            roundScores[1];
-
-
-        document.getElementById(
-            "round2HitRate"
-        ).textContent =
-            calculateHitRate(
-                roundHits[1],
-                roundShots[1]
-            ) + "%";
-
-
-
-        // 3回目
-
-        document.getElementById(
-            "round3Score"
-        ).textContent =
-            roundScores[2];
-
-
-        document.getElementById(
-            "round3HitRate"
-        ).textContent =
-            calculateHitRate(
-                roundHits[2],
-                roundShots[2]
-            ) + "%";
-
-
-
-        // 合計
-
-        const totalScore =
-            roundScores[0] +
-            roundScores[1] +
-            roundScores[2];
-
-
-        const totalShots =
-            roundShots[0] +
-            roundShots[1] +
-            roundShots[2];
-
-
-        const totalHits =
-            roundHits[0] +
-            roundHits[1] +
-            roundHits[2];
-
-
-        document.getElementById(
-            "totalScore"
-        ).textContent =
-            totalScore;
-
-
-        document.getElementById(
-            "totalHitRate"
-        ).textContent =
-            calculateHitRate(
-                totalHits,
-                totalShots
-            ) + "%";
-
-    }
-
-
-
-    // ========================================
-    // スコア追加
-    // ========================================
-
-    window.addScore = function(points) {
-
-
-        currentScore += points;
-
-
-        shots++;
-
-        hits++;
-
-
-        roundScores[
-            currentRound - 1
-        ] += points;
-
-
-        roundShots[
-            currentRound - 1
-        ]++;
-
-
-        roundHits[
-            currentRound - 1
-        ]++;
-
-
-        updateDisplay();
-
-    };
-
-
-
-    // ========================================
-    // MISS
-    // ========================================
-
-    window.miss = function() {
-
-
-        shots++;
-
-
-        roundShots[
-            currentRound - 1
-        ]++;
-
-
-        updateDisplay();
-
-    };
-
-
-
-    // ========================================
-    // Challenger番号
-    // ========================================
-
-    function normalizeParticipantNumber() {
-
-
-        const input =
-            document.getElementById(
-                "participantNumber"
-            );
-
-
-        const value =
-            input.value.trim();
-
-
-        if (value === "") {
-
-            alert(
-                "Challenger番号を入力してください。"
-            );
-
-            return null;
-
-        }
-
-
-        const number =
-            Number(value);
-
-
-        if (
-            !Number.isInteger(number) ||
-            number < 1 ||
-            number > 9999
-        ) {
-
-            alert(
-                "Challenger番号は1〜9999で入力してください。"
-            );
-
-            return null;
-
-        }
-
-
-        return String(number).padStart(
-            4,
-            "0"
+    // 2ラウンド目
+    document.getElementById("round2Score").textContent =
+        roundScores[1];
+
+    document.getElementById("round2Rate").textContent =
+        calculateHitRate(
+            roundHits[1],
+            roundShots[1]
         );
 
-    }
 
+    // 3ラウンド目
+    document.getElementById("round3Score").textContent =
+        roundScores[2];
 
+    document.getElementById("round3Rate").textContent =
+        calculateHitRate(
+            roundHits[2],
+            roundShots[2]
+        );
 
-    // ========================================
-    // Firebase保存
-    // ========================================
 
-    async function saveToFirebase() {
+    // 合計点
+    const totalScore =
+        roundScores[0] +
+        roundScores[1] +
+        roundScores[2];
 
+    document.getElementById("totalScore").textContent =
+        totalScore;
 
-        const participant =
-            normalizeParticipantNumber();
 
+    // 3ラウンド合計HIT率
+    const totalShots =
+        roundShots[0] +
+        roundShots[1] +
+        roundShots[2];
 
-        if (participant === null) {
+    const totalHits =
+        roundHits[0] +
+        roundHits[1] +
+        roundHits[2];
 
-            return false;
+    document.getElementById("totalHitRate").textContent =
+        calculateHitRate(
+            totalHits,
+            totalShots
+        );
+}
 
-        }
 
+// =====================================
+// 10点・50点・100点
+// =====================================
 
-        const station =
-            document.getElementById(
-                "station"
-            ).value;
+window.addScore = function(points) {
 
+    score += points;
 
+    shots++;
 
-        const totalShots =
-            roundShots[0] +
-            roundShots[1] +
-            roundShots[2];
+    hits++;
 
+    roundScores[currentRound - 1] += points;
 
-        const totalHits =
-            roundHits[0] +
-            roundHits[1] +
-            roundHits[2];
+    roundShots[currentRound - 1]++;
 
-
-        const totalScore =
-            roundScores[0] +
-            roundScores[1] +
-            roundScores[2];
-
-
-        const totalHitRate =
-            calculateHitRate(
-                totalHits,
-                totalShots
-            );
-
-
-
-        const data = {
-
-            station:
-                station,
-
-            participant:
-                participant,
-
-            round:
-                currentRound,
-
-            score:
-                currentScore,
-
-            shots:
-                shots,
-
-            hits:
-                hits,
-
-            hitRate:
-                calculateHitRate(
-                    hits,
-                    shots
-                ),
-
-            totalShots:
-                totalShots,
-
-            totalHits:
-                totalHits,
-
-            totalHitRate:
-                totalHitRate,
-
-            totalScore:
-                totalScore,
-
-            roundScores:
-                roundScores,
-
-            roundShots:
-                roundShots,
-
-            roundHits:
-                roundHits,
-
-            status:
-                statusElement.textContent,
-
-            updatedAt:
-                Date.now()
-
-        };
-
-
-
-        try {
-
-
-            await set(
-
-                ref(
-                    database,
-                    "scores/" +
-                    participant +
-                    "/" +
-                    station
-                ),
-
-                data
-
-            );
-
-
-            statusElement.textContent =
-                "Firebaseに保存しました！";
-
-
-            return true;
-
-
-        } catch (error) {
-
-
-            console.error(error);
-
-
-            statusElement.textContent =
-                "保存に失敗しました。";
-
-
-            alert(
-                "Firebaseへの保存に失敗しました。"
-            );
-
-
-            return false;
-
-        }
-
-    }
-
-
-
-    // ========================================
-    // ラウンド終了
-    // ========================================
-
-    window.endGame = async function() {
-
-
-        if (shots === 0) {
-
-            alert(
-                "まだスコアが入力されていません。"
-            );
-
-            return;
-
-        }
-
-
-
-        const saved =
-            await saveToFirebase();
-
-
-        if (!saved) {
-
-            return;
-
-        }
-
-
-
-        // 3ラウンド目
-
-        if (currentRound === 3) {
-
-
-            statusElement.textContent =
-                "3ラウンド終了！結果を保存しました。";
-
-
-            const total =
-                roundScores[0] +
-                roundScores[1] +
-                roundScores[2];
-
-
-            alert(
-                "3ラウンド終了！\n\n" +
-                "合計：" +
-                total +
-                "点"
-            );
-
-
-            return;
-
-        }
-
-
-
-        // 次のラウンド
-
-        currentRound++;
-
-
-        currentScore = 0;
-
-        shots = 0;
-
-        hits = 0;
-
-
-        updateDisplay();
-
-
-        statusElement.textContent =
-            "次のラウンド開始！";
-
-    };
-
-
-
-    // ========================================
-    // 初期表示
-    // ========================================
+    roundHits[currentRound - 1]++;
 
     updateDisplay();
+};
+
+
+// =====================================
+// MISS
+// =====================================
+
+window.miss = function() {
+
+    shots++;
+
+    roundShots[currentRound - 1]++;
+
+    updateDisplay();
+};
+
+
+// =====================================
+// ラウンド終了
+// =====================================
+
+window.endRound = async function() {
+
+    const participant =
+        normalizeParticipantNumber();
+
+    if (!participant) {
+        return;
+    }
+
+    const station =
+        document.getElementById("station").value;
+
+
+    // Firebaseへ保存
+    await saveToFirebase(
+        participant,
+        station
+    );
+
+
+    // 3ラウンド終了
+    if (currentRound === 3) {
+
+        document.getElementById("status").textContent =
+            "3ラウンド終了！";
+
+        document.getElementById("endButton").disabled =
+            true;
+
+        return;
+    }
+
+
+    // 次のラウンドへ
+    currentRound++;
+
+    score = 0;
+    shots = 0;
+    hits = 0;
+
+    document.getElementById("status").textContent =
+        currentRound + "ラウンド目開始";
+
+    updateDisplay();
+};
+
+
+// =====================================
+// Firebase保存
+// =====================================
+
+async function saveToFirebase(
+    participant,
+    station
+) {
+
+    const totalScore =
+        roundScores[0] +
+        roundScores[1] +
+        roundScores[2];
+
+    const totalShots =
+        roundShots[0] +
+        roundShots[1] +
+        roundShots[2];
+
+    const totalHits =
+        roundHits[0] +
+        roundHits[1] +
+        roundHits[2];
+
+    const totalHitRate =
+        calculateHitRate(
+            totalHits,
+            totalShots
+        );
+
+
+    const data = {
+
+        station: station,
+
+        participant: participant,
+
+        round: currentRound,
+
+        score: score,
+
+        shots: shots,
+
+        hits: hits,
+
+        hitRate: calculateHitRate(
+            hits,
+            shots
+        ),
+
+        totalScore: totalScore,
+
+        totalShots: totalShots,
+
+        totalHits: totalHits,
+
+        totalHitRate: totalHitRate,
+
+        roundScores: roundScores,
+
+        roundShots: roundShots,
+
+        roundHits: roundHits,
+
+        updatedAt: Date.now()
+    };
+
+
+    try {
+
+        await set(
+            ref(
+                database,
+                "scores/" +
+                participant +
+                "/" +
+                station
+            ),
+            data
+        );
+
+        document.getElementById("status").textContent =
+            "保存しました";
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("status").textContent =
+            "保存に失敗しました";
+    }
+}
+
+
+// =====================================
+// 次のChallenger
+// =====================================
+
+window.nextChallenger = function() {
+
+    currentRound = 1;
+
+    score = 0;
+    shots = 0;
+    hits = 0;
+
+    roundScores = [0, 0, 0];
+    roundShots = [0, 0, 0];
+    roundHits = [0, 0, 0];
+
+    document.getElementById("participantNumber").value =
+        "";
+
+    document.getElementById("endButton").disabled =
+        false;
+
+    document.getElementById("status").textContent =
+        "次のChallenger番号を入力してください";
+
+    updateDisplay();
+};
+
+
+// =====================================
+// 最初の画面
+// =====================================
+
+updateDisplay();
 
 </script>
 
 </body>
-
 </html>
